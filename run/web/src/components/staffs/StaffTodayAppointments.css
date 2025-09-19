@@ -1,0 +1,68 @@
+
+.staff-today-appointments{
+    width: 100%;
+}
+
+.staff-today-appointments .content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 250px;
+    width: 100%;
+}
+
+.staff-today-appointments .content h3{
+    color: #004b91;
+    font-size: 25px;
+}
+
+.staff-appointments-list{
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.staff-appointments-list li {
+    padding: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    width: 78%;
+    justify-content: space-between;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.staff-appointments-list li div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.staff-appointments-list li p {
+    margin: 0;
+    font-size: 15px;
+}
+
+.staff-appointments-list li div button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    background-color: #004B91;
+    color: white;
+    font-size: 12px;
+    transition: all 0.3s ease-in-out;
+    min-width: 70px;
+}
+
+.staff-appointments-list li button:hover {
+    color: #004B91;
+    background-color: white;
+    box-shadow: 0 0 3px #004B91;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}

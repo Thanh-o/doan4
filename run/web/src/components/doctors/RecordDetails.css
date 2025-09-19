@@ -1,0 +1,546 @@
+.record-details-container {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 2vh auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+}
+
+/* Header Section */
+.record-header {
+    background: #004B91;
+
+    padding: 30px 40px;
+
+    color: white;
+    position: relative;
+}
+
+.record-title {
+    text-align: center;
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.recordID {
+    position: absolute;
+    top: 15px;
+    right: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+/* Section Styling */
+.section {
+    margin-bottom: 35px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section h4 {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-icon {
+    width: 28px;
+    height: 28px;
+    background-color: #1e3a8a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Patient Info Grid */
+.patient-info-grid {
+    /*display: grid;*/
+    /*grid-template-columns: repeat(2, 1fr);  !* 👈 2 cột cố định *!*/
+    /*gap: 20px;*/
+    margin-top: 15px;
+}
+
+
+.patient-info-item {
+    /*background-color: white;*/
+    padding: 15px;
+    /*border-radius: 8px;*/
+    /*border: 1px solid #e2e8f0;*/
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /*transition: transform 0.2s ease;   */
+    margin-top: 15px;
+
+}
+
+
+.patient-info-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.patient-info-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.patient-info-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Records List */
+.records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.record-list-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 1fr;
+    gap: 15px;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.record-list-item:hover {
+    
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.record-list-id {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.record-list-date, .record-list-department, .record-list-doctor {
+    color: #1f2937;
+}
+
+.record-list-status {
+    text-align: right;
+}
+
+/* Enhanced Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+
+    max-width: 1200px;
+    width: 95%;
+    max-height: 90vh;
+    padding: 0;
+    position: relative;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(145deg, #004B91, #0066CC);
+    padding: 25px 30px;
+    border-radius: 16px 16px 0 0;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+.record-header-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+}
+
+.medicaltitle {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.record-date-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.modal-body {
+
+    max-height: calc(90vh - 120px);
+    overflow-y: auto;
+
+}
+
+
+.modal-section {
+    /*background-color: #f9fafb;*/
+    padding: 24px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    /*border-left: 6px solid #3b82f6;*/
+}
+
+.modal-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 50px;
+}
+
+
+/* Doctor Info Grid */
+.doctor-info-grid {
+    /*display: grid;*/
+    /*grid-template-columns: repeat(2, 1fr);  !* 👈 2 cột cố định *!*/
+
+    /*gap: 20px;*/
+    margin-top: 15px;
+}
+
+.doctor-info-item {
+    background-color: white;
+    padding: 18px;
+    /*border-radius: 10px;*/
+    /*border: 1px solid #e2e8f0;*/
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);    margin-top: 15px;*/
+
+}
+
+
+
+
+/*.doctor-info-content {*/
+/*    flex: 1;*/
+/*}*/
+
+.doctor-info-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.doctor-info-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.4;
+}
+
+/* Appointment Info Grid */
+.appointment-info-grid {
+    /*display: grid;*/
+    /*grid-template-columns: repeat(2, 1fr);  !* 👈 2 cột cố định *!*/
+
+    /*gap: 20px;*/
+    margin-top: 15px;
+
+}
+
+.appointment-info-item {
+    /*background-color: white;*/
+    padding: 18px;
+    /*border-radius: 10px;*/
+    /*border: 1px solid #e2e8f0;*/
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /*transition: all 0.3s ease;*/
+    /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);*/
+    margin-top: 15px;
+}
+
+
+
+.appointment-info-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.appointment-info-content {
+    flex: 1;
+}
+
+.appointment-info-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.appointment-info-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.4;
+}
+
+/* Record Field Styling */
+.record-field {
+    margin-bottom: 25px;
+}
+
+.record-field .info-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e3a8a;
+    margin-bottom: 10px;
+}
+
+.record-field .notes-container,
+.record-field .prognosis-container {
+    background-color: #ffffff;
+    border-left: 4px solid #60a5fa;
+    padding: 16px;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+.record-field .notes-container:hover,
+.record-field .prognosis-container:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Enhanced Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Enhanced Download Button */
+.record-actions {
+    padding: 25px 30px;
+    /*background-color: #f8fafc;*/
+    /*border-top: 1px solid #e2e8f0;*/
+    border-radius: 0 0 16px 16px;
+    text-align: center;
+}
+
+.download-pdf-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border: none;
+    outline: none;
+    padding: 16px 32px;
+    border-radius: 50px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.download-pdf-button:hover {
+
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+}
+
+.download-pdf-button:active {
+    transform: translateY(-1px);
+}
+
+/* Enhanced Medical Image Container */
+.medical-image-container {
+    margin: 25px 0;
+    text-align: center;
+    background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px dashed #cbd5e1;
+    transition: all 0.3s ease;
+}
+
+.medical-image-container:hover {
+    border-color: #3b82f6;
+    background: linear-gradient(145deg, #eff6ff, #dbeafe);
+}
+
+.medical-image-container .record-header-title {
+    color: #1e3a8a;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.medical-image-container img {
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+
+
+/* Enhanced Close Button */
+.modal-close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.modal-close-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+
+}
+
+/* Responsive Design for Modal */
+@media (max-width: 768px) {
+    .modal-overlay {
+        padding: 10px;
+    }
+    
+    .modal-content {
+        width: 98%;
+        max-height: 95vh;
+    }
+    
+    .modal-header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+
+    .doctor-info-grid,
+    .appointment-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-section {
+        padding: 20px;
+    }
+
+
+    .modal-section-title {
+        font-size: 18px;
+    }
+    
+    .record-actions {
+        padding: 20px;
+    }
+    
+    .download-pdf-button {
+        padding: 14px 24px;
+        font-size: 14px;
+    }
+}

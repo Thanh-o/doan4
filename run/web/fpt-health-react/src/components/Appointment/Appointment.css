@@ -1,5 +1,5 @@
 .services-container {
-    width: 100%;
+    width: 98%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,6 +15,10 @@
     color: #000000;
 }
 
+.background{
+    width: 60%;
+}
+
 .process-bar{
     display: flex;
     flex-direction: row;
@@ -26,7 +30,7 @@
     border: 1px solid rgba(0,0,0,0.3);
     border-bottom: none;
     border-radius: 25px 25px 0 0;
-    width: 60%;
+    width: 100%;
 }
 
 .process-bar-step1, .process-bar-step2, .process-bar-step3{
@@ -44,7 +48,7 @@
 }
 
 .process-bar-step1.active, .process-bar-step2.active, .process-bar-step3.active{
-    background-color: #2ecc71;
+    background-color: #004b91;
     transition: all 0.3s ease-in-out;
 }
 
@@ -56,7 +60,7 @@
 }
 
 .process-bar-line12.active, .process-bar-line23.active {
-    background-color: #2ecc71;
+    background-color: #004b91;
     transition: all 0.3s ease-in-out;
 }
 
@@ -69,7 +73,7 @@
 
 .services-form-container{
     height: 100%;
-    width: 60%;
+    width: 100%;
     border: 1px solid rgba(0,0,0,0.3);
     background-color: white;
     display: flex;
@@ -123,9 +127,9 @@
     justify-content: flex-start;
     flex-wrap: nowrap;
     align-items: center;
-    border: 1px solid hsl(0, 0%, 80%);
+    /* border: 1px solid hsl(0, 0%, 80%); */
     border-radius: 25px;
-    margin-top: 5px;
+    /* margin-top: 5px; */
     transition: all 0.3s ease-in-out;
 }
 
@@ -174,7 +178,7 @@ input[type="date"]{
 }
 
 .prev-step{
-    width: 90%;
+    width: 100%;
     padding: 10px;
     box-sizing: border-box;
     border-radius: 25px;
@@ -185,6 +189,10 @@ input[type="date"]{
     border: 1px solid rgba(0,0,0,0.3);
 }
 
+.paypal-button-container{
+    padding-left: 35px;
+}
+
 .prev-step:hover{
     color: #b90000;
     background-color: #ffffff;
@@ -192,7 +200,6 @@ input[type="date"]{
     transition: all 0.3s ease-in-out;
     border: 1px solid #b90000;
 }
-
 
 .date-buttons button, .time-slots button {
     flex: 1 1 30%;
@@ -355,7 +362,7 @@ input[type="date"]{
 
 .success-message h2{
     font-size: 25px;
-    color: #2ecc71;
+    color: #004b91;
 }
 
 .success-message{
@@ -397,12 +404,13 @@ input[type="date"]{
 }
 
 .appointment-div, .patient-div{
-    width: 40%;
+    width: 30%;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    align-items: center;
+    /* align-items: center; */
     gap: 15px;
+    padding-left: 40px;
 }
 
 .appointment-div h4, .patient-div h4{
@@ -424,12 +432,91 @@ input[type="date"]{
     box-sizing: border-box;
 }
 
-.payment-container{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: flex-start;
+/**/
+
+
+.profile-card {
+    width: 100%;
 }
+
+
+
+.profile-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.profile-section1 {
+    padding: 24px;
+
+}
+
+.profile-section1:last-child {
+    border-bottom: none;
+}
+
+.profile-section1 h4 {
+    margin: 0 0 16px 0;
+    color: #495057;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-row .label {
+    font-weight: 500;
+    color: #6c757d;
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+
+
+.info-row .value {
+    color: #212529;
+    text-align: right;
+    flex: 1;
+    margin-left: 16px;
+}
+
+.total-section {
+    background-color: #f8f9fa;
+    padding: 20px 24px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.total-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.total-amount {
+    font-weight: 700;
+    color: #28a745;
+    font-size: 1.4rem;
+}
+
+
 
 .date-select span {
     font-size: 15px;
@@ -438,14 +525,6 @@ input[type="date"]{
     text-align: center;
     padding-bottom: 10px;
 }
-
-
-/*button:not(.get-code):disabled {*/
-/*    background-color: #cccccc !important;*/
-/*    color: #666666 !important;*/
-/*    cursor: not-allowed !important;*/
-/*    pointer-events: none !important;*/
-/*}*/
 
 .css-1nmdiq5-menu, .css-1jqq78o-placeholder, .css-1dimb5e-singleValue{
     font-size: 15px;
@@ -484,8 +563,6 @@ input[type="date"]{
     position: relative;
 }
 
-
-
 /* Doctor List Section */
 .doctor-list {
     margin-top: 30px;
@@ -521,7 +598,7 @@ input[type="date"]{
 }
 
 .doctor-card:hover {
-    transform: translateY(-8px);
+
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     border-color: #007bff;
 }
@@ -555,8 +632,8 @@ input[type="date"]{
 }
 
 .doctor-card p {
-    font-size: 13px;
-    color: #666;
+    color:#007bff;
+    font-size: 14px;
     margin: 0 0 6px;
     line-height: 1.5;
     display: -webkit-box;
@@ -615,4 +692,172 @@ input[type="date"]{
         max-width: 300px;
         margin: 0 auto;
     }
+}
+
+/* Doctor Detail Popup */
+.doctor-detail-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.popup-content {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: left;
+    position: relative;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(0.8);
+    animation: scaleIn 0.3s ease-in-out forwards;
+}
+
+.popup-content h3 {
+    margin: 0 0 15px;
+    color: #004b91;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.popup-content p {
+    margin: 10px 0;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.popup-content p strong {
+    color: #004b91;
+}
+
+.popup-content img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.close-popup {
+    background: #004b91;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    margin-left: auto;
+    transition: background 0.3s ease-in-out;
+}
+
+.close-popup:hover {
+    background: #003366;
+}
+
+.details-button {
+    background: #004b91;
+    color: #ffffff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s ease-in-out;
+}
+
+.details-button:hover {
+    background: #003366;
+}
+
+/* Responsive Design for Popup */
+@media (max-width: 640px) {
+    .popup-content {
+        width: 95%;
+        padding: 15px;
+        max-height: 70vh;
+    }
+
+    .popup-content h3 {
+        font-size: 18px;
+    }
+
+    .popup-content p {
+        font-size: 13px;
+    }
+
+    .popup-content img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .close-popup, .details-button {
+        font-size: 13px;
+        padding: 8px 16px;
+    }
+}
+
+/* Animation for Popup */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.cash-payment-button {
+    width: 97.5%;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 4px;
+    color: white;
+    font-size: 20px;
+    background-color: #28a745; /* PayPal's primary blue */
+    border: 1px solid #005EA6; /* Slightly darker border for contrast */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-family: 'Helvetica', 'Arial', sans-serif; /* PayPal-like font */
+    font-weight: 600; /* Bold text for emphasis */
+    text-align: center; /* Center text */
+    cursor: pointer; /* Hand cursor on hover */
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth hover effects */
+}
+
+.cash-payment-button:hover {
+    background-color: #188e34; /* Darker blue on hover */
+
+}
+
+.cash-payment-button:active {
+    transform: translateY(0); /* Reset lift on click */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
 }

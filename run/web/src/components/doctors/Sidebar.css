@@ -1,0 +1,36 @@
+/* Sidebar.css */
+.sidebar-doctor {
+    width: 250px;
+    background-color: #004B91;
+    /*padding: 20px;*/
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-doctor .sidebar-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    padding: 20px 5px;
+}
+
+.sidebar-item:hover {
+    background-color: #1565c0;
+}
+
+.sidebar-icon {
+    margin-right: 10px;
+}
+
+.sidebar-text {
+    font-size: 18px;
+}

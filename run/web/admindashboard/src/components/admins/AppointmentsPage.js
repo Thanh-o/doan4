@@ -136,31 +136,46 @@ const AppointmentsPage = () => {
             </thead>
             <tbody>
               {appointments.length > 0 ? (
-                appointments.map((appointment) => (
-                  <tr
-                    key={appointment.appointment_id}
-                    onClick={() => handleAppointmentClick(appointment.appointment_id)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td>{appointment.appointment_id || ""}</td>
-                    <td>{appointment.patient?.[0]?.patient_name || ""}</td>
-                    <td>{appointment.doctor?.[0]?.doctor_name || ""}</td>
-                    <td>
-                      {appointment.medical_day
-                        ? new Date(appointment.medical_day).toLocaleDateString()
-                        : ""}
-                    </td>
-                    <td>{convertSlotToTime(appointment.slot)}</td>
-                    <td>{appointment.status || ""}</td>
-                    <td>{appointment.price || ""}</td>
-                  </tr>
-                ))
+                  appointments.map((appointment, index) => (
+                      <tr
+                          key={appointment.appointment_id}
+                          onClick={() => handleAppointmentClick(appointment.appointment_id)}
+                          style={{cursor: "pointer"}}
+                      >
+                        <td>{index + 1}</td>
+                        <td>{appointment.patient?.[0]?.patient_name || ""}</td>
+                        <td>{appointment.doctor?.[0]?.doctor_name || ""}</td>
+                        <td>
+                          {appointment.medical_day
+                              ? new Date(appointment.medical_day).toLocaleDateString()
+                              : ""}
+                        </td>
+                        <td>{convertSlotToTime(appointment.slot)}</td>
+                        <td>
+  <span className={`status ${
+      appointment.status === "PENDING"
+          ? "sta-pending"
+          : appointment.status === "COMPLETED"
+              ? "sta-completed"
+              : appointment.status === "CANCELLED"
+                  ? "sta-cancelled"
+                  : appointment.status === "MISSED"
+                      ? "sta-missed"
+                      : ""
+  }`}>
+    {appointment.status || ""}
+  </span>
+                        </td>
+
+                        <td>{appointment.price || ""}</td>
+                      </tr>
+                  ))
               ) : (
-                <tr>
-                  <td colSpan={7} align="center">
-                    No appointments found
-                  </td>
-                </tr>
+                  <tr>
+                    <td colSpan={7} align="center">
+                      No appointments found
+                    </td>
+                  </tr>
               )}
             </tbody>
           </table>

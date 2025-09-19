@@ -41,7 +41,7 @@ const PatientDetailPageB1 = () => {
     }, [patientId]);
 
     const handleBack = () => {
-        navigate('/patients');
+        navigate(-1);
     };
 
     const handleOpenFeedbackModal = () => {
@@ -80,6 +80,21 @@ const PatientDetailPageB1 = () => {
         navigate(`/appointments/${appointmentId}`);
     };
 
+    const sortedAppointments = [...appointments].sort((a, b) => {
+        const dateA = new Date(a.medical_day);
+        const dateB = new Date(b.medical_day);
+
+        if (dateA.getTime() === dateB.getTime()) {
+            // Cùng ngày → slot lớn hơn đứng trước
+            return b.slot - a.slot;
+        } else {
+            // Ngày xa hơn (trong tương lai) đứng trước
+            return dateB - dateA;
+        }
+    });
+
+
+
     return (
         <div className="patient-detail-pageB1">
             <Sidebar
@@ -92,8 +107,10 @@ const PatientDetailPageB1 = () => {
             />
             <div className="patient-contentB1">
                 <div className="headerB1">
+
+                    <button className="back-buttonB1" onClick={handleBack}>  ← Back</button>
                     <h2>Patient Details</h2>
-                    <button className="back-buttonB1" onClick={handleBack}>Patients List</button>
+                    <p></p>
                 </div>
                 {patient ? (
                    <div className="doctor-info-v2025">
@@ -175,24 +192,28 @@ const PatientDetailPageB1 = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {appointments.length > 0 ? (
-                                        appointments.map(appointment => (
-                                            <tr
-                                                key={appointment.appointment_id}
-                                                onClick={() => handleAppointmentClick(appointment.appointment_id)}
-                                            >
-                                                <td>{appointment.appointment_id}</td>
-                                                <td>{new Date(appointment.medical_day).toLocaleDateString()}</td>
-                                                <td>{getTimeFromSlot(appointment.slot)}</td>
-                                                <td>{appointment.doctor?.[0]?.doctor_name || ''}</td>
-                                                <td>{appointment.status}</td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="5">No appointments found.</td>
-                                        </tr>
-                                    )}
+                                {sortedAppointments.map(appointment => (
+                                    <tr
+                                        key={appointment.appointment_id}
+                                        onClick={() => handleAppointmentClick(appointment.appointment_id)}
+                                    >
+                                        <td>{appointment.appointment_id}</td>
+                                        <td>{new Date(appointment.medical_day).toLocaleDateString()}</td>
+                                        <td>{getTimeFromSlot(appointment.slot)}</td>
+                                        <td>{appointment.doctor?.[0]?.doctor_name || ''}</td>
+                                        <td>
+      <span className={`status-label ${
+          appointment.status === 'PENDING' ? 'status-pending' :
+              appointment.status === 'COMPLETED' ? 'status-completed' :
+                  appointment.status === 'CANCELLED' ? 'status-cancelled' :
+                      appointment.status === 'MISSED' ? 'status-missed' : ''
+      }`}>
+        {appointment.status}
+      </span>
+                                        </td>
+                                    </tr>
+                                ))}
+
                                 </tbody>
                             </table>
                         </div>

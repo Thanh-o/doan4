@@ -31,6 +31,7 @@ function Header() {
   const [alertMess, setAlertMess] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const { pathname } = useLocation();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navigate = useNavigate();
   const navigateToAppointment = () => {
@@ -377,7 +378,13 @@ function Header() {
     }, 2000);
   };
 
+// Sửa hàm handleLogout
   const handleLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
+// Thêm hàm xác nhận logout
+  const confirmLogout = () => {
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("patient_id");
     window.location.href = "/";
@@ -385,6 +392,11 @@ function Header() {
     setUsername("");
     setPatientId(null);
     setIsLoggedIn(false);
+    setShowLogoutConfirm(false);
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   useEffect(() => {
@@ -818,6 +830,45 @@ const handleSuccessGoogle = async (credentialResponse) => {
             )}
           </ul>
         </div>
+      )}
+      {showLogoutConfirm && (
+          <div className="login-container">
+            <div className="login-overlay"></div>
+            <div className="login-form show" style={{height: 'fit-content', padding: '20px'}}>
+              <h4 className="login-header">Confirm Sign Out</h4>
+              <p style={{textAlign: 'center', margin: '20px 0', color: '#000'}}>
+                Are you sure you want to sign out?
+              </p>
+              <div style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
+                <button
+                    onClick={confirmLogout}
+                    style={{
+                      backgroundColor: '#b90000',
+                      color: 'white',
+                      border: '1px solid #b90000',
+                      padding: '10px 20px',
+                      borderRadius: '25px',
+                      cursor: 'pointer'
+                    }}
+                >
+                  Yes
+                </button>
+                <button
+                    onClick={cancelLogout}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: '#004b91',
+                      border: '1px solid #004b91',
+                      padding: '10px 20px',
+                      borderRadius: '25px',
+                      cursor: 'pointer'
+                    }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
       )}
     </header>
   );

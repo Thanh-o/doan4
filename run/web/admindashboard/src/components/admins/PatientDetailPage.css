@@ -377,3 +377,33 @@ tr:hover {
         height: 60px;
     }
 }
+.status-label {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    min-width: 80px;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background-color: #a855f7; /* tím */
+    color: white;
+}
+
+.status-completed {
+    background-color: #22c55e; /* xanh lá */
+    color: white;
+}
+
+.status-cancelled {
+    background-color: #ef4444; /* đỏ */
+    color: white;
+}
+
+.status-missed {
+    background-color: #facc15; /* vàng */
+    color: #333;
+}
+

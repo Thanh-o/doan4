@@ -152,7 +152,7 @@
   padding: 20px 0;
   box-sizing: border-box;
   position: relative;
-  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  /* border-top: 1px solid rgba(0, 0, 0, 0.3); */
 }
 
 .patient-info-item {
@@ -335,7 +335,7 @@
 .appointment-action {
   position: absolute;
   right: 20px;
-  bottom: 20px;
+  bottom: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -369,7 +369,7 @@
   cursor: pointer;
   color: #ffffff;
   border: 2px solid #ffffff;
-  padding: 5px 20px;
+  padding: 8px 25px;
   border-radius: 25px;
   box-sizing: border-box;
   transition: all 0.3s ease-in-out;
@@ -633,7 +633,7 @@
   --gradient-bg: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
 }
 
-.record-details-popup {
+/* .record-details-popup {
   position: fixed;
   top: 0;
   left: 0;
@@ -665,10 +665,7 @@
   cursor: pointer;
   transition: var(--transition);
 }
-/* 
-        .record-details-overlay:hover {
-            background: rgba(0, 0, 0, 0.75);
-        } */
+
 
 .record-details-content {
   background: var(--gradient-bg);
@@ -726,9 +723,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
+} */
 
-.detail-row {
+/* .detail-row {
   display: flex;
   gap: 1.5rem;
   align-items: flex-start;
@@ -762,8 +759,8 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   transition: var(--transition);
-}
-.image-loading {
+} */
+/* .image-loading {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -815,7 +812,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .record-details-content {
     width: 95%;
     padding: 1.5rem;
@@ -848,5 +845,165 @@
   .action-button {
     padding: 0.6rem 1.2rem;
     font-size: 0.85rem;
+  }
+}  */
+
+
+.change-password-popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.change-password-popup-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2001;
+}
+
+.change-password-popup {
+  position: relative;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 400px;
+  z-index: 2002;
+  font-family: 'Arial', sans-serif;
+}
+
+.change-password-popup h3 {
+  margin: 0 0 20px;
+  font-size: 24px;
+  color: #2c5282;
+  text-align: center;
+}
+
+.change-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.form-group .password-input-wrapper {
+  position: relative;
+}
+
+.form-group input {
+  padding: 10px 40px 10px 10px; /* Adjusted padding to accommodate icon */
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: #2c5282;
+  box-shadow: 0 0 5px rgba(44, 82, 130, 0.3);
+}
+
+.form-group .password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  padding: 5px;
+  background: none;
+  border: none;
+  user-select: none;
+}
+
+.form-group .password-toggle svg {
+  width: 100%;
+  height: 100%;
+  fill: #718096;
+  transition: fill 0.3s ease;
+}
+
+.form-group .password-toggle:hover svg {
+  fill: #2c5282;
+}
+
+.change-password-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.change-password-save,
+.change-password-cancel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.change-password-save {
+  background: #2c5282;
+  color: #ffffff;
+}
+
+.change-password-save:hover {
+  background: #1a365d;
+}
+
+.change-password-cancel {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.change-password-cancel:hover {
+  background: #cbd5e0;
+}
+
+@media (max-width: 480px) {
+  .change-password-popup {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .change-password-popup h3 {
+    font-size: 20px;
+  }
+
+  .change-password-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .change-password-save,
+  .change-password-cancel {
+    width: 100%;
   }
 }

@@ -1,0 +1,42 @@
+/*!* AppointmentList.css *!*/
+/*.appointment-list {*/
+/*    margin: 20px;*/
+/*}*/
+
+/*.appointment-card {*/
+/*    border: 1px solid #ccc;*/
+/*    padding: 16px;*/
+/*    margin-bottom: 16px;*/
+/*    background-color: white;*/
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*.appointment-card p {*/
+/*    margin: 8px 0;*/
+/*}*/
+
+/*button {*/
+/*    padding: 8px 16px;*/
+/*    margin-right: 8px;*/
+/*    border: none;*/
+/*    border-radius: 4px;*/
+/*    cursor: pointer;*/
+/*    color: white;*/
+/*}*/
+
+/*.edit-button {*/
+/*    background-color: #ff9800;*/
+/*}*/
+
+/*.edit-button:hover {*/
+/*    background-color: #e68900;*/
+/*}*/
+
+/*.confirm-button {*/
+/*    background-color: #4caf50;*/
+/*}*/
+
+/*.confirm-button:hover {*/
+/*    background-color: #45a049;*/
+/*}*/

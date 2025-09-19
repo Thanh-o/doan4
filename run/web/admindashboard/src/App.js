@@ -30,6 +30,9 @@ import UpcomingAppointments from './components/staffs/UpcomingAppointments';
 import ExaminePatient from './components/doctors/ExaminePatient';
 import HomePage from './components/HomePage';
 import DoctorInfoPage from './components/doctors/DoctorInfoPage';
+import MedicalRecordDetails from "./components/doctors/MedicalRecordDetails";
+import NewAppoint from "./components/admins/NewAppoint";
+
 const App = () => {
     return (
         <Router>
@@ -59,9 +62,11 @@ const App = () => {
                 <Route path="/monthlyappointments" element={<MonthlyAppointments />} />
                 <Route path="/medicalrecords" element={<MedicalRecords />} />
                 <Route path="/record-details" element={<RecordDetails />} />
+                <Route path="/medical-record-details" element={<MedicalRecordDetails />} />
                 <Route path="/stafftodayappointments" element={<StaffTodayAppointments />} />
                 <Route path="/upcoming-appointments" element={<UpcomingAppointments />} />
                 <Route path="/examine/:appointmentId" element={<ExaminePatient />} />
+                <Route path="/new-appointment" element={<NewAppoint />} />
             </Routes>
         </Router>
     );

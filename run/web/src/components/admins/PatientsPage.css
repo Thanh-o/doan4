@@ -1,0 +1,92 @@
+/* Đảm bảo các phần tử cha chiếm toàn bộ chiều cao và chiều rộng của màn hình */
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+/* Container chính cho trang PatientsPage */
+.patients-page {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+/* Container cho nội dung chính */
+.content {
+    padding: 38px;
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.table-container-1 table thead th {
+ position: sticky;
+  top: 0;
+  background-color: #004B91;
+  color: white;
+  padding: 10px;
+  text-align: left;
+   z-index: 1;
+}
+
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-container h4 {
+    margin: 0;
+}
+
+.back-button {
+    padding: 10px 20px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    background-color: #1565c0;
+}
+
+.table-container-1 {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    height: 30px;
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #f5f5f5;
+    font-weight: 500;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td[align="center"] {
+    text-align: center;
+}
+
+
+.table-container-patien{
+    padding: 50px 30px 0 30px;
+}

@@ -1,0 +1,67 @@
+/* StaffLayout.css */
+.staff-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    ;
+}
+
+.app-bar {
+    width: 100%;
+    /*background-color: #3f51b5;*/
+    color: white;
+    position: fixed;
+    top: 0;
+    z-index: 1300;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /*padding: 15px 20px;*/
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.title {
+    font-size: 22px;
+    padding: 20px;
+    width: 210px;
+    background-color:#004B91;
+
+}
+
+.logout-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    margin-right: 30px;
+}
+
+
+.staff-ctm {
+    display: flex;
+    flex-grow: 1;
+    margin-top: 64px; /* Adjust based on the height of the app-bar */
+    width: 100%;
+}
+
+
+
+.main-content-staff {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    margin-left: 250px; /* Width of the sidebar */
+    height: calc(100vh - 64px); /* Height adjustment to fill the remaining space */
+    overflow-y: auto;
+}

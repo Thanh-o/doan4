@@ -15,6 +15,7 @@ public class Appointments extends Entity<Integer>{
     private String payment_name;
     private BigDecimal price;
     private Integer staff_id;
+    private String note;
     private List<Patients> patient;
     private List<Doctors> doctor;
     private List<Staffs> staff;
@@ -124,4 +125,8 @@ public class Appointments extends Entity<Integer>{
     public void setStaff(List<Staffs> staff) {
         this.staff = staff;
     }
+
+    public void setNote(String note) {this.note = note;}
+
+    public String getNote() {return note;}
 }

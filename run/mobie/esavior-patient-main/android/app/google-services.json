@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "319732847064",
+    "project_id": "gleaming-advice-456113-b4",
+    "storage_bucket": "gleaming-advice-456113-b4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319732847064:android:b2ceecd86b319d099922ad",
+        "android_client_info": {
+          "package_name": "com.example.esavior_doctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "319732847064-0ncdsi0q1su3fo8apkee10mr6ctqlkl9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCnIg3xHRLhjP6M8TIHaaAjwpDBbgR0nY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "319732847064-0ncdsi0q1su3fo8apkee10mr6ctqlkl9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319732847064:android:a7ffad37924586d59922ad",
+        "android_client_info": {
+          "package_name": "com.example.esavior_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "319732847064-0ncdsi0q1su3fo8apkee10mr6ctqlkl9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCnIg3xHRLhjP6M8TIHaaAjwpDBbgR0nY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "319732847064-0ncdsi0q1su3fo8apkee10mr6ctqlkl9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

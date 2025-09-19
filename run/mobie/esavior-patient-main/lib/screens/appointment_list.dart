@@ -501,6 +501,15 @@ class _AppointmentListState extends State<AppointmentList> {
                             color: blackColor,
                             fontWeight: FontWeight.bold),
                       ),
+                      Text(
+                        "Note: ${appointment['note'] ?? ''}",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: blackColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
                     ],
                   ),
                 ),

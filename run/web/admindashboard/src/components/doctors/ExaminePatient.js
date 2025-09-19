@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ExaminePatient.css';
@@ -7,21 +8,19 @@ const ExaminePatient = () => {
     const { appointmentId } = useParams();
     const [appointment, setAppointment] = useState(null);
     const [patient, setPatient] = useState(null);
-    const [patientMedicalRecords, setPatientMedicalRecords] = useState([]);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [openAddMedicalRecordDialog, setOpenAddMedicalRecordDialog] = useState(false);
-    const [openMedicalRecordsDialog, setOpenMedicalRecordsDialog] = useState(false);
-    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [newMedicalRecord, setNewMedicalRecord] = useState({
         symptoms: '',
         diagnosis: '',
-        test_results: '',
+
         prescription: '',
-        notes: '',
+        treatment: '',
         image: ''
     });
+    const [doctorName, setDoctorName] = useState('');
     const navigate = useNavigate();
+    const diagnosisEditorRef = useRef(null);
 
     const timeSlots = [
         { value: 1, label: '08:00 - 09:00' },
@@ -40,111 +39,33 @@ const ExaminePatient = () => {
     };
 
     useEffect(() => {
+        if (!appointmentId) {
+            console.error('No appointmentId available');
+            setError('Appointment ID not found');
+            return;
+        }
+
         axios.get(`http://localhost:8081/api/v1/appointments/${appointmentId}`)
             .then(response => {
-                console.log('Appointment API response:', response.data);
+                console.log('Appointment data:', response.data);
                 setAppointment(response.data);
                 setPatient(response.data.patient?.[0] || null);
             })
             .catch(error => {
-                console.error('Error fetching appointment details', error);
-                setError('ERROR FETCHING APPOINTMENT DETAILS');
+                console.error('Error fetching appointment details:', error);
+                setError('Error loading appointment information');
+            });
+
+        const doctorId = localStorage.getItem('doctor_id');
+        axios.get(`http://localhost:8081/api/v1/doctors/${doctorId}`)
+            .then(response => {
+                setDoctorName(response.data.doctor_name || 'Not specified');
+            })
+            .catch(error => {
+                console.error('Error fetching doctor details:', error);
+                setDoctorName('Not specified');
             });
     }, [appointmentId]);
-
-    const handleCompleteAppointment = () => {
-        setShowConfirmDialog(true);
-    };
-
-    const handleConfirmComplete = () => {
-        axios.put('http://localhost:8081/api/v1/appointments/updateStatus', {
-            appointment_id: appointmentId,
-            status: 'COMPLETED',
-            doctor_id: localStorage.getItem('doctor_id')
-        })
-            .then(response => {
-                console.log('Status updated successfully:', response.data);
-                setSuccessMessage('APPOINTMENT COMPLETED SUCCESSFULLY');
-                setTimeout(() => setSuccessMessage(''), 2000);
-                setShowConfirmDialog(false);
-                axios.get(`http://localhost:8081/api/v1/appointments/${appointmentId}`)
-                    .then(response => {
-                        setAppointment(response.data);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching updated appointment', error);
-                        setError('ERROR FETCHING UPDATED APPOINTMENT');
-                    });
-            })
-            .catch(error => {
-                console.error('Error updating status', error);
-                setError('ERROR UPDATING STATUS');
-                setShowConfirmDialog(false);
-            });
-    };
-
-    const handleCancelComplete = () => {
-        setShowConfirmDialog(false);
-    };
-
-    const handleShowMedicalRecords = () => {
-        if (!patient?.patient_id) {
-            setError('NO PATIENT ID');
-            return;
-        }
-        axios.get('http://localhost:8081/api/v1/medicalrecords/search', {
-            params: { patient_id: patient.patient_id }
-        })
-            .then(response => {
-                console.log('Medical records API response:', response.data);
-                const records = Array.isArray(response.data) ? response.data : [];
-                // Sort records by creation date (newest first)
-                const sortedRecords = records.sort((a, b) => {
-                    // Try to sort by record_id (assuming higher ID = newer record)
-                    if (a.record_id && b.record_id) {
-                        return b.record_id - a.record_id;
-                    }
-                    // If follow_up_date exists, sort by that
-                    if (a.follow_up_date && b.follow_up_date) {
-                        return new Date(b.follow_up_date) - new Date(a.follow_up_date);
-                    }
-                    // If created_at exists, sort by that
-                    if (a.created_at && b.created_at) {
-                        return new Date(b.created_at) - new Date(a.created_at);
-                    }
-                    return 0;
-                });
-                setPatientMedicalRecords(sortedRecords);
-                setOpenMedicalRecordsDialog(true);
-            })
-            .catch(error => {
-                console.error('Error fetching medical records', error);
-                setError('ERROR FETCHING MEDICAL RECORDS');
-                setPatientMedicalRecords([]);
-            });
-    };
-
-    const handleCloseMedicalRecordsDialog = () => {
-        setOpenMedicalRecordsDialog(false);
-        setPatientMedicalRecords([]);
-    };
-
-    const handleAddMedicalRecordOpen = () => {
-        setOpenAddMedicalRecordDialog(true);
-    };
-
-    const handleAddMedicalRecordClose = () => {
-        setOpenAddMedicalRecordDialog(false);
-        setNewMedicalRecord({
-            symptoms: '',
-            diagnosis: '',
-            test_results: '',
-            prescription: '',
-            notes: '',
-            image: ''
-        });
-        setError('');
-    };
 
     const handleNewMedicalRecordChange = (e) => {
         const { name, value } = e.target;
@@ -154,32 +75,71 @@ const ExaminePatient = () => {
         }));
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setNewMedicalRecord((prevData) => ({
+                    ...prevData,
+                    image: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleConfirmComplete = () => {
+        axios.put('http://localhost:8081/api/v1/appointments/updateStatus', {
+            appointment_id: appointmentId,
+            status: 'COMPLETED',
+            doctor_id: localStorage.getItem('doctor_id')
+        })
+            .then(response => {
+                setSuccessMessage('Examination completed successfully');
+                setTimeout(() => {
+                    setSuccessMessage('');
+                    navigate('/todayappointments');
+                }, 2000);
+                axios.get(`http://localhost:8081/api/v1/appointments/${appointmentId}`)
+                    .then(response => {
+                        setAppointment(response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching updated appointment', error);
+                        setError('Error updating appointment information');
+                    });
+            })
+            .catch(error => {
+                console.error('Error updating status', error);
+                setError('Error updating status');
+            });
+    };
+
     const handleAddMedicalRecordSubmit = () => {
-        // Validate required fields
+
         if (!newMedicalRecord.symptoms.trim()) {
-            setError('PLEASE ENTER SYMPTOMS');
+            setError('Please enter symptoms');
             return;
         }
-        if (!newMedicalRecord.diagnosis.trim()) {
-            setError('PLEASE ENTER DIAGNOSIS');
+        const diagnosisText = diagnosisEditorRef.current?.textContent || diagnosisEditorRef.current?.innerText || '';
+        if (!diagnosisText.trim()) {
+            setError('Please enter diagnosis');
             return;
         }
-        if (!newMedicalRecord.test_results.trim()) {
-            setError('PLEASE ENTER TEST RESULTS');
-            return;
-        }
+
         if (!newMedicalRecord.prescription.trim()) {
-            setError('PLEASE ENTER PRESCRIPTION');
+            setError('Please enter prescription');
             return;
         }
-        if (!newMedicalRecord.notes.trim()) {
-            setError('PLEASE ENTER NOTES');
+        if (!newMedicalRecord.treatment.trim()) {
+            setError('Please enter treatment notes');
             return;
         }
 
         if (!patient?.patient_id) {
-            console.error('No patient ID available');
-            setError('NO PATIENT ID');
+
+            setError('Patient ID not found');
             return;
         }
 
@@ -188,269 +148,285 @@ const ExaminePatient = () => {
             patient_id: patient.patient_id,
             doctor_id: localStorage.getItem('doctor_id'),
             follow_up_date: new Date().toISOString().split('T')[0],
-            test_results: newMedicalRecord.test_results || 'No test results',
-            notes: newMedicalRecord.notes || 'No notes'
+
+            treatment: newMedicalRecord.treatment || 'No treatment treatment'
         };
 
         axios.post('http://localhost:8081/api/v1/medicalrecords/insert', medicalRecordData)
             .then(response => {
-                console.log('Medical record added successfully:', response.data);
+
                 setNewMedicalRecord({
                     symptoms: '',
                     diagnosis: '',
-                    test_results: '',
+
                     prescription: '',
-                    notes: '',
+                    treatment: '',
                     image: ''
                 });
-                setSuccessMessage('MEDICAL RECORD ADDED SUCCESSFULLY');
+                setSuccessMessage('Medical record saved successfully');
                 setTimeout(() => setSuccessMessage(''), 2000);
-                setOpenAddMedicalRecordDialog(false);
                 setError('');
+                handleConfirmComplete();
             })
             .catch(error => {
-                console.error('Error adding medical record', error);
-                setError('ERROR ADDING MEDICAL RECORD');
+                console.error('Error adding medical record:', error);
+                setError('Error saving medical record');
             });
     };
 
-    const viewRecordDetails = (record) => {
-        navigate('/record-details', { state: { record } });
+    if (!appointment || !patient) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    const execCommand = (command, value = null) => {
+        document.execCommand(command, false, value);
+        diagnosisEditorRef.current?.focus();
+        updateDiagnosisContent();
     };
 
-    if (error && !openAddMedicalRecordDialog) {
-        return <div className="xiz-error-message">{error}</div>;
-    }
+    const updateDiagnosisContent = () => {
+        if (diagnosisEditorRef.current) {
+            const htmlContent = diagnosisEditorRef.current.innerHTML;
 
-    if (!appointment || !patient) {
-        return <div className="xiz-loading">LOADING...</div>;
-    }
+            setNewMedicalRecord(prev => ({
+                ...prev,
+                diagnosis: htmlContent
+            }));
+        }
+    };
+
+    const formatText = (command) => {
+        execCommand(command);
+    };
 
     return (
-        <div className="xiz-examine-patient-container">
-            <div className="xiz-examine-patient-header">
-                <h1>PATIENT EXAMINATION</h1>
-                {successMessage && (
-                    <div className="xiz-success-message">{successMessage}</div>
-                )}
-            </div>
-            <div className="xiz-patient-card">
-                <div className="xiz-patient-card-header">
-                    <h2>PATIENT INFORMATION</h2>
-                </div>
-                <div className="xiz-patient-card-body">
-                    <div className="xiz-patient-info-row">
-                        <span className="xiz-info-label">Full Name:</span>
-                        <span>{patient.patient_name || 'NO DATA'}</span>
-                    </div>
-                    <div className="xiz-patient-info-row">
-                        <span className="xiz-info-label">Email:</span>
-                        <span>{patient.patient_email || 'NO DATA'}</span>
-                    </div>
-                    <div className="xiz-patient-info-row">
-                        <span className="xiz-info-label">Examination Date:</span>
-                        <span>{new Date(appointment.medical_day).toLocaleDateString('en-US')}</span>
-                    </div>
-                    <div className="xiz-patient-info-row">
-                        <span className="xiz-info-label">Time Slot:</span>
-                        <span>{getTimeSlotLabel(appointment.slot)}</span>
-                    </div>
-                    <div className="xiz-patient-info-row">
-                        <span className="xiz-info-label">Status:</span>
-                        <span>{appointment.status}</span>
-                    </div>
-                    {appointment.status !== 'COMPLETED' && (
-                        <div className="xiz-status-update-section">
-                            <button onClick={handleCompleteAppointment} className="xiz-btn xiz-btn-primary">COMPLETE APPOINTMENT</button>
-                        </div>
-                    )}
-                </div>
-                <div className="xiz-patient-card-footer">
-                    <button onClick={handleAddMedicalRecordOpen} className="xiz-btn xiz-btn-primary">EXAMINE</button>
-                    <button onClick={handleShowMedicalRecords} className="xiz-btn xiz-btn-primary">VIEW MEDICAL RECORDS</button>
-                    <button onClick={() => navigate('/todayappointments')} className="xiz-btn xiz-btn-secondary">BACK TO LIST</button>
-                </div>
+        <div className="medical-form-container">
+            {/* Header */}
+            <div className="form-header">
+                <button className="back-btn" onClick={() => navigate(-1)}>
+                    ← Back
+                </button>
+                <h1>MEDICAL RECORD</h1>
+
             </div>
 
-            {/* Add Medical Record Dialog */}
-            {openAddMedicalRecordDialog && (
-                <div className="xiz-dialog-overlay">
-                    <div className="xiz-dialog">
-                        <div className="xiz-dialog-header">
-                            <h2>ADD MEDICAL RECORD - {patient.patient_name || 'UNKNOWN'}</h2>
-                            <button onClick={handleAddMedicalRecordClose} className="xiz-dialog-close-btn">×</button>
-                        </div>
-                        <div className="xiz-dialog-body">
-                            {error && <div className="xiz-error-message">{error}</div>}
-                            
-                            <div className="xiz-form-group">
-                                <label>Symptoms *</label>
-                                <textarea
-                                    name="symptoms"
-                                    placeholder="Enter patient's symptoms"
-                                    value={newMedicalRecord.symptoms}
-                                    onChange={handleNewMedicalRecordChange}
-                                    className="xiz-form-textarea"
-                                />
-                            </div>
-
-                            <div className="xiz-form-group">
-                                <label>Diagnosis *</label>
-                                <textarea
-                                    name="diagnosis"
-                                    placeholder="Enter diagnosis"
-                                    value={newMedicalRecord.diagnosis}
-                                    onChange={handleNewMedicalRecordChange}
-                                    className="xiz-form-textarea"
-                                />
-                            </div>
-
-                            <div className="xiz-form-group">
-                                <label>Test Results *</label>
-                                <textarea
-                                    name="test_results"
-                                    placeholder="Enter test results"
-                                    value={newMedicalRecord.test_results}
-                                    onChange={handleNewMedicalRecordChange}
-                                    className="xiz-form-textarea"
-                                />
-                            </div>
-
-                            <div className="xiz-form-group">
-                                <label>Prescription *</label>
-                                <textarea
-                                    name="prescription"
-                                    placeholder="Enter prescription"
-                                    value={newMedicalRecord.prescription}
-                                    onChange={handleNewMedicalRecordChange}
-                                    className="xiz-form-textarea"
-                                />
-                            </div>
-
-                            <div className="xiz-form-group">
-                                <label>Notes *</label>
-                                <textarea
-                                    name="notes"
-                                    placeholder="Enter notes"
-                                    value={newMedicalRecord.notes}
-                                    onChange={handleNewMedicalRecordChange}
-                                    className="xiz-form-textarea"
-                                />
-                            </div>
-
-                            <div className="xiz-form-group">
-                                <label>Upload Image</label>
-                                <input
-                                    type="file"
-                                    name="imageFile"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            const reader = new FileReader();
-                                            reader.onload = () => {
-                                                handleNewMedicalRecordChange({
-                                                    target: { name: 'image', value: reader.result }
-                                                });
-                                            };
-                                            reader.readAsDataURL(file);
-                                        }
-                                    }}
-                                    className="xiz-form-file"
-                                />
-                                {newMedicalRecord.image && (
-                                    <div className="xiz-image-preview">
-                                        <img
-                                            src={newMedicalRecord.image}
-                                            alt="Medical record image"
-                                            className="xiz-preview-image"
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className="xiz-dialog-footer">
-                            <button onClick={handleAddMedicalRecordClose} className="xiz-btn xiz-btn-danger">CANCEL</button>
-                            <button onClick={handleAddMedicalRecordSubmit} className="xiz-btn xiz-btn-primary">SAVE MEDICAL RECORD</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* View Medical Records Dialog */}
-            {openMedicalRecordsDialog && (
-                <div className="xiz-dialog-overlay">
-                    <div className="xiz-dialog xiz-dialog-records">
-                        <div className="xiz-dialog-header">
-                            <h2>MEDICAL RECORDS - {patient.patient_name || 'UNKNOWN'}</h2>
-                            <button onClick={handleCloseMedicalRecordsDialog} className="xiz-dialog-close-btn">×</button>
-                        </div>
-                        <div className="xiz-dialog-body">
-                            {patientMedicalRecords.length === 0 ? (
-                                <p className="xiz-no-records">NO MEDICAL RECORDS</p>
+            {/* Patient Info */}
+            <div className="patient-info-section">
+                <h2>Patient Information</h2>
+                <div className="patient-details">
+                    <div className="patient-header">
+                        <div className="patient-photo-container">
+                            {patient.patient_img ? (
+                                <img src={patient.patient_img} alt="Patient Photo" className="patient-photo"/>
                             ) : (
-                                <ul className="xiz-medical-records-list">
-                                    {patientMedicalRecords.map((record, index) => (
-                                        <li key={index} className="xiz-medical-record-item">
-                                            <div className="xiz-record-header">
-                                                <h4>RECORD ID: {record.record_id}</h4>
-                                            </div>
-                                            <div className="xiz-record-details">
-                                                <p><strong>Symptoms:</strong> {record.symptoms || 'No symptoms'}</p>
-                                                <p><strong>Diagnosis:</strong> {record.diagnosis || 'No diagnosis'}</p>
-                                                <p><strong>Test Results:</strong> {record.test_results || 'No test results'}</p>
-                                                <p><strong>Prescription:</strong> {record.prescription || 'No prescription'}</p>
-                                                <p><strong>Notes:</strong> {record.notes || 'No notes'}</p>
-                                                <p><strong>Image:</strong> {record.image ? <img src={record.image} alt="Record" className="xiz-record-image" /> : 'No image'}</p>
-                                                <p><strong>Follow-up Date:</strong> {record.follow_up_date || 'No follow-up date'}</p>
-                                                <p><strong>Created:</strong> {record.created_at ? new Date(record.created_at).toLocaleString('en-US') : 'No date'}</p>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="patient-photo-placeholder">
+                                    <span>No Photo</span>
+                                </div>
                             )}
                         </div>
-                        <div className="xiz-dialog-footer">
-                            <button onClick={handleCloseMedicalRecordsDialog} className="xiz-btn xiz-btn-danger">CLOSE</button>
+                        <div className="patient-basic-info">
+                            <h3 className="patient-name">{patient.patient_name || ''}</h3>
+                            <p className="patient-email">{patient.patient_email || ''}</p>
                         </div>
                     </div>
-                </div>
-            )}
 
-            {/* Confirm Complete Dialog */}
-            {showConfirmDialog && (
-                <div className="xiz-dialog-overlay">
-                    <div className="xiz-dialog xiz-dialog-confirm">
-                        <div className="xiz-dialog-header">
-                            <h2>CONFIRM COMPLETION</h2>
+                    <div className="patient-details-grid">
+
+                        <div className="detail-item">
+                            <span className="detail-label">Phone:</span>
+                            <span className="detail-value">{patient.patient_phone || ''}</span>
                         </div>
-                        <div className="xiz-dialog-body">
-                            <div className="xiz-confirm-content">
-                                <div className="xiz-confirm-icon">
-                                    <div className="xiz-warning-icon">⚠️</div>
-                                </div>
-                                <p className="xiz-confirm-message">
-                                    Are you sure you want to complete this appointment?
-                                </p>
-                                <div className="xiz-patient-confirm-info">
-                                    <p><strong>Patient:</strong> {patient.patient_name}</p>
-                                    <p><strong>Date:</strong> {new Date(appointment.medical_day).toLocaleDateString('en-US')}</p>
-                                    <p><strong>Time:</strong> {getTimeSlotLabel(appointment.slot)}</p>
-                                </div>
-                                <p className="xiz-confirm-note">
-                                    This action cannot be undone.
-                                </p>
+                        <div className="detail-item">
+                            <span className="detail-label">Date of Birth:</span>
+                            <span className="detail-value">
+                                {patient.patient_dob ? new Date(patient.patient_dob).toLocaleDateString('en-US') : ''}
+                            </span>
+                        </div>
+                        <div className="detail-item">
+                            <span className="detail-label">Gender:</span>
+                            <span className="detail-value">{patient.patient_gender || ''}</span>
+                        </div>
+                        <div className="detail-item">
+                            <span className="detail-label">Address:</span>
+                            <span className="detail-value">{patient.patient_address || ''}</span>
+                        </div>
+
+                    </div>
+
+                    <div className="appointment-details">
+                        <h4>Appointment Details</h4>
+                        <div className="appointment-grid">
+                            <div className="detail-item">
+                                <span className="detail-label">Examination Date:</span>
+                                <span className="detail-value">
+                                    {new Date(appointment.medical_day).toLocaleDateString('en-US')}
+                                </span>
+                            </div>
+                            <div className="detail-item">
+                                <span className="detail-label">Time Slot:</span>
+                                <span className="detail-value">{getTimeSlotLabel(appointment.slot)}</span>
+                            </div>
+                            <div className="detail-item">
+                                <span className="detail-label">Examining Doctor:</span>
+                                <span className="detail-value">{doctorName}</span>
+                            </div>
+                            <div className="detail-item">
+                                <span className="detail-label">Status:</span>
+                                <span className={`detail-value sta-${appointment.status?.toLowerCase()}`}>
+                                    {appointment.status || ''}
+                                </span>
                             </div>
                         </div>
-                        <div className="xiz-dialog-footer">
-                            <button onClick={handleCancelComplete} className="xiz-btn xiz-btn-secondary">CANCEL</button>
-                            <button onClick={handleConfirmComplete} className="xiz-btn xiz-btn-primary">YES, COMPLETE</button>
-                        </div>
                     </div>
                 </div>
-            )}
+            </div>
+
+            {/* Medical Record Form */}
+            <div className="medical-record-section">
+                <h2>Medical Examination Information</h2>
+                <div className="form-grid">
+                    <div className="form-group full-width">
+                        <label>Symptoms and Clinical Examination *</label>
+                        <textarea
+                            name="symptoms"
+                            placeholder="Enter symptoms, clinical signs, medical history..."
+                            value={newMedicalRecord.symptoms}
+                            onChange={handleNewMedicalRecordChange}
+                            rows="4"
+                            required
+                        />
+                    </div>
+                    <div className="form-group full-width">
+                        <label>Diagnosis *</label>
+
+                        {/* Toolbar cho rich text editor */}
+                        <div className="rich-editor-toolbar">
+                            <button type="button" onClick={() => formatText('bold')} className="toolbar-btn">
+                                <strong>B</strong>
+                            </button>
+                            <button type="button" onClick={() => formatText('italic')} className="toolbar-btn">
+                                <em>I</em>
+                            </button>
+                            <button type="button" onClick={() => formatText('underline')} className="toolbar-btn">
+                                <u>U</u>
+                            </button>
+                            <button type="button" onClick={() => execCommand('insertUnorderedList')}
+                                    className="toolbar-btn">
+                                • List
+                            </button>
+                            <button type="button" onClick={() => execCommand('insertOrderedList')}
+                                    className="toolbar-btn">
+                                1. List
+                            </button>
+                            <select onChange={(e) => execCommand('formatBlock', e.target.value)}
+                                    className="toolbar-select">
+                                <option value="">Format</option>
+                                <option value="h3">Heading 3</option>
+                                <option value="h4">Heading 4</option>
+                                <option value="p">Paragraph</option>
+                            </select>
+                        </div>
+
+                        {/* Rich text editor */}
+                        <div
+                            ref={diagnosisEditorRef}
+                            className="rich-text-editor"
+                            contentEditable={true}
+                            onInput={updateDiagnosisContent}
+                            onBlur={updateDiagnosisContent}
+                            data-placeholder="Enter confirmed or suspected diagnosis with formatting..."
+                            style={{
+                                minHeight: '120px',
+                                border: '1px solid #ddd',
+                                borderRadius: '4px',
+                                padding: '12px',
+                                fontSize: '14px',
+                                lineHeight: '1.5',
+                                outline: 'none'
+                            }}
+                        />
+                    </div>
+
+                    <div className="form-group full-width">
+                        <label>Prescription *</label>
+                        <textarea
+                            name="prescription"
+                            placeholder="Enter medication names, dosages, and instructions..."
+                            value={newMedicalRecord.prescription}
+                            onChange={handleNewMedicalRecordChange}
+                            rows="4"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group full-width">
+                        <label>Treatment Instructions and Follow-up *</label>
+                        <textarea
+                            name="treatment"
+                            placeholder="Enter treatment guidelines and follow-up schedule..."
+                            value={newMedicalRecord.treatment}
+                            onChange={handleNewMedicalRecordChange}
+                            rows="4"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Attached Images</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                        />
+                        {newMedicalRecord.image && (
+                            <div className="image-preview">
+                                <img
+                                    src={newMedicalRecord.image}
+                                    alt="Medical Image"
+                                    className="preview-image"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="form-footer">
+                <button
+                    type="button"
+                    onClick={() => {
+                        setNewMedicalRecord({
+                            symptoms: '',
+                            diagnosis: '',
+
+                            prescription: '',
+                            treatment: '',
+                            image: ''
+                        });
+                        // Clear rich text editor
+                        if (diagnosisEditorRef.current) {
+                            diagnosisEditorRef.current.innerHTML = '';
+                        }
+                    }}
+                    className="btn-secondary"
+                >
+                    Clear Form
+                </button>
+                <button
+                    type="button"
+                    onClick={handleAddMedicalRecordSubmit}
+                    className="btn-primary"
+                >
+                    Save Medical Record
+                </button>
+            </div>
+            {successMessage && <div className="success-message">{successMessage}</div>}
+            {error && <div className="error-message">{error}</div>}
         </div>
+
     );
+
 };
 
 export default ExaminePatient;

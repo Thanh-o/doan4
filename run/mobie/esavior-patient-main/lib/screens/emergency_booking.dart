@@ -981,9 +981,11 @@ class _EmergencyBookingState extends State<EmergencyBooking> {
                       ),
                       children: [
                         TileLayer(
-                          urlTemplate:
-                              'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          subdomains: ['a', 'b', 'c'],
+                          urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                          subdomains: const ['a', 'b', 'c', 'd'],
+                          additionalOptions: {
+                            'attribution': '© OpenStreetMap contributors © CARTO',
+                          },
                         ),
                         if (_currentLocation != null ||
                             _hospitalLocation != null ||

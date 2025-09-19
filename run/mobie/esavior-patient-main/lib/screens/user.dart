@@ -103,8 +103,8 @@ class _UserState extends State<User> {
             phone = patientData[0]['patient_phone']?.toString() ?? '';
             address = patientData[0]['patient_address'] ?? '';
             gender = (patientData[0]['patient_gender'] == 'Male' ||
-                    patientData[0]['patient_gender'] == 'Female' ||
-                    patientData[0]['patient_gender'] == 'Other')
+                patientData[0]['patient_gender'] == 'Female' ||
+                patientData[0]['patient_gender'] == 'Other')
                 ? patientData[0]['patient_gender']
                 : 'Other';
             patientNameController.text = name;
@@ -112,21 +112,25 @@ class _UserState extends State<User> {
             patientPhoneController.text = phone;
             patientAddressController.text = address;
             if (patientData[0]['patient_img'] != null &&
-                patientData[0]['patient_img'] != '') {
-              imagePath =
-                  'http://10.0.2.2:8081/${patientData[0]['patient_img']}';
+                patientData[0]['patient_img'].isNotEmpty) {
+              // Kiểm tra xem patient_img có phải là URL đầy đủ không
+              if (patientData[0]['patient_img'].startsWith('http')) {
+                imagePath = patientData[0]['patient_img']; // Sử dụng URL đầy đủ
+              } else {
+                imagePath = 'http://10.0.2.2:8081/${patientData[0]['patient_img']}'; // Nối với máy chủ cục bộ
+              }
               imageValid = true;
+              print('URL ảnh từ fetchPatientData: $imagePath'); // In để kiểm tra
             } else {
               imageValid = false;
             }
           });
         }
       } else {
-        print(
-            'Error fetching patient data! Status Code: ${response.statusCode}');
+        print('Lỗi lấy dữ liệu bệnh nhân! Mã trạng thái: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error: $error');
+      print('Lỗi: $error');
     }
     setState(() {
       isLoading = false;
@@ -134,46 +138,56 @@ class _UserState extends State<User> {
   }
 
   Future<void> pickImage() async {
+    setState(() {
+      isLoadingImage = true;
+    });
     final ImagePicker picker = ImagePicker();
-    final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedImage = await picker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse(
-            'http://10.0.2.2:8081/api/v1/patients/upload-image'),
+        Uri.parse('http://10.0.2.2:8081/api/v1/patients/upload-image'),
       );
       request.files.add(
           await http.MultipartFile.fromPath('patient_image', pickedImage.path));
       request.fields['patient_id'] = widget.patientId.toString();
       try {
         setState(() {
-          imagePath = pickedImage.path;
+          imagePath = pickedImage.path; // Hiển thị ảnh cục bộ tạm thời
         });
         final response = await request.send();
         if (response.statusCode == 200) {
           final resData = await response.stream.bytesToString();
           final result = json.decode(resData);
+          print('Phản hồi từ máy chủ: $result'); // In để kiểm tra
           setState(() {
-            imagePath =
-                'http://10.0.2.2:8081/${result['filePath']}';
-            imageValid = true;
+            if (result.containsKey('filePath') && result['filePath'].isNotEmpty) {
+              // Kiểm tra xem filePath có phải là URL đầy đủ không
+              if (result['filePath'].startsWith('http')) {
+                imagePath = result['filePath']; // Sử dụng URL đầy đủ
+              } else {
+                imagePath = 'http://10.0.2.2:8081/${result['filePath']}'; // Nối với máy chủ cục bộ
+              }
+              imageValid = true;
+            } else {
+              imageValid = false;
+              showTemporaryMessage(context, 'Lỗi: Không nhận được đường dẫn ảnh!');
+            }
           });
-          showTemporaryMessage(context, 'Image updated successfully!');
+          showTemporaryMessage(context, 'Tải ảnh lên thành công!');
         } else {
-          showTemporaryMessage(context, 'Error uploading image!');
-          print('Error uploading image! Status Code: ${response.statusCode}');
+          showTemporaryMessage(context, 'Lỗi khi tải ảnh lên!');
+          print('Lỗi tải ảnh! Mã trạng thái: ${response.statusCode}');
         }
       } catch (error) {
-        print('Error uploading image: $error');
-        showTemporaryMessage(context, 'Error uploading image!');
+        print('Lỗi tải ảnh: $error');
+        showTemporaryMessage(context, 'Lỗi khi tải ảnh lên!');
       }
     }
     setState(() {
       isLoadingImage = false;
     });
   }
-
   Future<void> updatePatient(Map<String, dynamic> patientData) async {
     final response = await http.put(
       Uri.parse(
@@ -222,20 +236,20 @@ class _UserState extends State<User> {
                 child: SingleChildScrollView(
                   child: Stack(
                     children: [
-                      Container(
-                        height: 220,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageValid
-                                ? NetworkImage(imagePath)
-                                : const NetworkImage(
-                                    'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg',
-                                  ),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                      // Container(
+                      //   height: 220,
+                      //   width: double.infinity,
+                      //   decoration: BoxDecoration(
+                      //     image: DecorationImage(
+                      //       image: imageValid
+                      //           ? NetworkImage(imagePath)
+                      //           : const NetworkImage(
+                      //               'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg',
+                      //             ),
+                      //       fit: BoxFit.cover,
+                      //     ),
+                      //   ),
+                      // ),
                       Positioned.fill(
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -408,80 +422,81 @@ class _UserState extends State<User> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: TextFormField(
-                                  controller: patientEmailController,
-                                  onChanged: (value) =>
-                                      setState(() => email = value),
-                                  keyboardType: TextInputType.emailAddress,
-                                  cursorColor: Colors.black54,
-                                  style: const TextStyle(
-                                      color: blackColor,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold),
-                                  decoration: const InputDecoration(
-                                    prefixIcon: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8.0),
-                                      child: Icon(
-                                        Icons.email,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                    hintText: 'Email Address',
-                                    hintStyle: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black54, width: 1.0),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black54, width: 1.0),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.red,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.red,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
-                                    ),
-                                    errorStyle: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Email address cannot be empty';
-                                    }
-                                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                                        .hasMatch(value)) {
-                                      return 'Invalid email address';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
+                              // SizedBox(
+                              //   width: double.infinity,
+                              //   child: TextFormField(
+                              //     controller: patientEmailController,
+                              //     enabled: false,
+                              //     onChanged: (value) =>
+                              //         setState(() => email = value),
+                              //     keyboardType: TextInputType.emailAddress,
+                              //     cursorColor: Colors.black54,
+                              //     style: const TextStyle(
+                              //         color: blackColor,
+                              //         fontSize: 16.0,
+                              //         fontWeight: FontWeight.bold),
+                              //     decoration: const InputDecoration(
+                              //       prefixIcon: Padding(
+                              //         padding:
+                              //             EdgeInsets.symmetric(horizontal: 8.0),
+                              //         child: Icon(
+                              //           Icons.email,
+                              //           color: Colors.black54,
+                              //         ),
+                              //       ),
+                              //       hintText: 'Email Address',
+                              //       hintStyle: TextStyle(
+                              //           color: Colors.black54,
+                              //           fontSize: 16.0,
+                              //           fontWeight: FontWeight.bold),
+                              //       focusedBorder: OutlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //             color: Colors.black54, width: 1.0),
+                              //         borderRadius:
+                              //             BorderRadius.all(Radius.circular(15)),
+                              //       ),
+                              //       enabledBorder: OutlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //             color: Colors.black54, width: 1.0),
+                              //         borderRadius:
+                              //             BorderRadius.all(Radius.circular(15)),
+                              //       ),
+                              //       errorBorder: OutlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //           color: Colors.red,
+                              //           width: 1.0,
+                              //         ),
+                              //         borderRadius:
+                              //             BorderRadius.all(Radius.circular(15)),
+                              //       ),
+                              //       focusedErrorBorder: OutlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //           color: Colors.red,
+                              //           width: 1.0,
+                              //         ),
+                              //         borderRadius:
+                              //             BorderRadius.all(Radius.circular(15)),
+                              //       ),
+                              //       errorStyle: TextStyle(
+                              //           color: Colors.red,
+                              //           fontSize: 12,
+                              //           fontWeight: FontWeight.bold),
+                              //     ),
+                              //     validator: (value) {
+                              //       if (value == null || value.isEmpty) {
+                              //         return 'Email address cannot be empty';
+                              //       }
+                              //       if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                              //           .hasMatch(value)) {
+                              //         return 'Invalid email address';
+                              //       }
+                              //       return null;
+                              //     },
+                              //   ),
+                              // ),
+                              // const SizedBox(
+                              //   height: 20,
+                              // ),
                               SizedBox(
                                 width: double.infinity,
                                 child: TextFormField(

@@ -161,6 +161,8 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> with TickerProv
   }
 
   Future<void> fetchAppointments({bool forceRefresh = false}) async {
+    print('DEBUG: Fetching appointments for doctor_id: $_doctorId'); // 👈 Thêm dòng này
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -276,6 +278,8 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> with TickerProv
 
     return appointments.where((appointment) {
       final Map<String, dynamic> a = Map<String, dynamic>.from(appointment);
+      if (a['doctor_id'] != _doctorId) return false;
+
       if (a['status'] != 'PENDING') return false;
 
       final medicalDay = a['medical_day'];

@@ -193,16 +193,29 @@ html {
     flex-direction: column;
 }
 
-.profile button {
+.create-appoint button{
     background-color: #004B91;
     color: #ffffff;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    border
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    gap: 5px;
+    border-radius: 4px;
+}
 
-: none;
+.logout {
+    background-color: #004B91;
+    color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border: none;
     outline: none;
     cursor: pointer;
     padding: 10px;

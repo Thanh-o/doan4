@@ -19,7 +19,7 @@
         <!-- Thêm thông tin Client ID của bạn từ Google Cloud -->
         <meta-data
                 android:name="com.google.android.gms.clientId"
-                android:value="554562346993-q7rpghnvlr820jfvjg7q8hoh0he9c8l1.apps.googleusercontent.com" /><!-- Thay YOUR_CLIENT_ID bằng Client ID của bạn -->
+                android:value="319732847064-f1dakpa04a1tf4531lfut3ivtunflo42.apps.googleusercontent.com" /><!-- Thay YOUR_CLIENT_ID bằng Client ID của bạn -->
 
         <!-- Thêm Google Play Services version -->
         <meta-data

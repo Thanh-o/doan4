@@ -7,12 +7,17 @@ const blueColor = Color.fromARGB(255, 33, 150, 233);
 
 class DoctorDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> doctor;
+  final String departmentName;
 
-  DoctorDetailsScreen({Key? key, required this.doctor}) : super(key: key);
+  DoctorDetailsScreen({
+    Key? key,
+    required this.doctor,
+    required this.departmentName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final String departmentName = getDepartmentName(doctor['department_id']);
+    final String deptName = departmentName;
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -41,7 +46,7 @@ class DoctorDetailsScreen extends StatelessWidget {
             children: [
               _buildDoctorProfile(),
               const SizedBox(height: 20),
-              _buildInfoRow(Icons.local_hospital, 'Department', departmentName),
+              _buildInfoRow(Icons.local_hospital, 'Department', deptName),
               const SizedBox(height: 10),
               _buildInfoRow(Icons.school, 'Experience', doctor['doctor_description']),
               const SizedBox(height: 10),
@@ -162,16 +167,5 @@ class DoctorDetailsScreen extends StatelessWidget {
     );
   }
 
-  final Map<String, String> departments = {
-    '12': 'Pediatrics',
-    '13': 'Dentistry',
-    '14': 'Neurology',
-    '15': 'Ophthalmology',
-    '16': 'Cardiology',
-    '17': 'Digestive',
-  };
 
-  String getDepartmentName(int departmentId) {
-    return departments[departmentId.toString()] ?? 'Unknown Department';
-  }
 }

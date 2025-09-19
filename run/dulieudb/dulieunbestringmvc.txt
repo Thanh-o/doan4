@@ -1,0 +1,677 @@
+create database fpthealth
+use fpthealth
+
+-- Create table: departments
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY,
+    department_name VARCHAR(100) NOT NULL,
+    location VARCHAR(255),
+    department_img VARCHAR(10000),
+    department_description TEXT,
+    summary TEXT
+);
+
+-- Create table: doctors
+CREATE TABLE doctors (
+    doctor_id INT PRIMARY KEY,
+    doctor_name VARCHAR(100) NOT NULL,
+    doctor_phone INT,
+    doctor_address VARCHAR(255),
+    doctor_email VARCHAR(100) UNIQUE,
+    department_id INT,
+    doctor_username VARCHAR(50) UNIQUE,
+    doctor_password VARCHAR(255),
+    summary TEXT,
+    doctor_image VARCHAR(1000),
+    doctor_price DECIMAL(10, 2),
+    doctor_description TEXT,
+    working_status VARCHAR(50),
+    FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+
+
+-- Create table: staffs
+CREATE TABLE staffs (
+    staff_id INT PRIMARY KEY,
+    staff_name VARCHAR(100) NOT NULL,
+    staff_phone INT,
+    staff_address VARCHAR(255),
+    staff_type VARCHAR(50),
+    staff_status VARCHAR(50),
+    staff_username VARCHAR(50) UNIQUE,
+    staff_password VARCHAR(255),
+    staff_email VARCHAR(100) UNIQUE
+);
+
+-- Create table: appointments
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATE,
+    medical_day DATE,
+    slot INT,
+    status VARCHAR(50),
+    payment_name VARCHAR(100),
+    price DECIMAL(10, 2),
+    staff_id INT,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id),
+    FOREIGN KEY (staff_id) REFERENCES staffs(staff_id)
+);
+
+CREATE TABLE medicalrecords (
+    record_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT NOT NULL,
+    symptoms TEXT,
+    diagnosis TEXT,
+    treatment TEXT,
+    prescription TEXT,
+    follow_up_date DATE,
+    doctor_id INT NOT NULL,
+    severity DECIMAL(10, 2),
+    image longtext,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+);
+ALTER TABLE Medicalrecords MODIFY COLUMN image LONGTEXT;
+
+
+-- Create table: feedback
+CREATE TABLE feedback (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    subject VARCHAR(255),
+    message TEXT,
+    created_at DATETIME
+);
+
+
+
+-- Create table: feedback_reply (based on FeedbackReplyDto, assuming it's a table)
+CREATE TABLE feedback_reply (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    message TEXT
+);
+
+
+-- Insert data into cities table
+INSERT INTO cities (city_id, city_name, city_created_at, city_updated_at) VALUES
+(1, 'Hanoi', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(2, 'Ho Chi Minh City', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(3, 'Da Nang', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(4, 'Hai Phong', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(5, 'Can Tho', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(6, 'Hue', '2025-05-12 10:00:00', '2025-05-12 0:00:00'),
+(7, 'Nha Trang', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(8, 'Vung Tau', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(9, 'Quang Ninh', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(10, 'Thai Nguyen', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(11, 'Bac Ninh', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(12, 'Vinh', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(13, 'Phu Quoc', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(14, 'Da Lat', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(15, 'Buon Ma Thuot', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(16, 'Long An', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(17, 'Dong Nai', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(18, 'Binh Duong', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(19, 'Tien Giang', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(20, 'Kien Giang', '2025-05-12 10:00:00', '2025-05-12 10:00:00');
+
+-- Insert data into hospitals table
+INSERT INTO hospitals (hospital_id, hospital_name, address, city_id, phone_number, zip_code, latitude, longitude, hospital_created_at, hospital_updated_at) VALUES
+(1, 'Bach Mai Hospital', '78 Giai Phong, Hanoi', 1, '02438693731', '100000', 21.007, 105.839, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(2, 'Cho Ray Hospital', '201B Nguyen Chi Thanh, HCMC', 2, '02838554137', '700000', 10.756, 106.659, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(3, 'Da Nang Hospital', '124 Hai Phong, Da Nang', 3, '02363821111', '550000', 16.060, 108.220, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(4, 'Viet Duc Hospital', '40 Trang Thi, Hanoi', 1, '02438253531', '100000', 21.031, 105.851, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(5, 'Can Tho Central Hospital', '315 Nguyen Van Cu, Can Tho', 5, '02923821111', '900000', 10.037, 105.788, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(6, 'Hue Central Hospital', '16 Le Loi, Hue', 6, '02343822441', '530000', 16.469, 107.589, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(7, 'Khanh Hoa General Hospital', '19 Yersin, Nha Trang', 7, '02583821111', '650000', 12.245, 109.194, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(8, 'Vung Tau General Hospital', '123 Le Loi, Vung Tau', 8, '02543852111', '790000', 10.346, 107.084, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(9, 'Bai Chay Hospital', 'Ha Long, Quang Ninh', 9, '02033841111', '200000', 20.951, 107.057, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(10, 'Thai Nguyen Central Hospital', '479 Luong Ngoc Quyen, Thai Nguyen', 10, '02083851111', '250000', 21.592, 105.849, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(11, 'Bac Ninh General Hospital', '123 Nguyen Trai, Bac Ninh', 11, '02223821111', '160000', 21.186, 106.076, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(12, 'Nghe An General Hospital', '178 Tran Phu, Vinh', 12, '02383861111', '460000', 18.679, 105.692, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(13, 'Phu Quoc General Hospital', 'Duong Dong, Phu Quoc', 13, '02973821111', '920000', 10.215, 103.959, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(14, 'Lam Dong General Hospital', '4 Pham Ngoc Thach, Da Lat', 14, '02633821111', '670000', 11.940, 108.458, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(15, 'Dak Lak General Hospital', '2 Nguyen Tat Thanh, Buon Ma Thuot', 15, '02623851111', '630000', 12.681, 108.038, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(16, 'Long An General Hospital', '123 Nguyen Thong, Long An', 16, '02723821111', '850000', 10.533, 106.405, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(17, 'Dong Nai General Hospital', '2 Dong Khoi, Bien Hoa', 17, '02513821111', '760000', 10.957, 106.817, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(18, 'Binh Duong General Hospital', '5 Pham Ngoc Thach, Thu Dau Mot', 18, '02743821111', '750000', 11.007, 106.657, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(19, 'Tien Giang General Hospital', '123 Le Loi, My Tho', 19, '02733821111', '860000', 10.360, 106.360, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(20, 'Kien Giang General Hospital', '46 Le Loi, Rach Gia', 20, '02973821111', '910000', 10.015, 105.080, '2025-05-12 10:00:00', '2025-05-12 10:00:00');
+
+-- Insert data into drivers table
+INSERT INTO drivers (driver_id, driver_name, email, password, driver_phone, license_number, status, latitude, longitude, driver_created_at, driver_updated_at, hospital_id) VALUES
+(1, 'Nguyen Van Nam', 'driver1@example.com', 'password123', '0912345671', 'LIC001', 'AVAILABLE', 21.008, 105.840, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 1),
+(2, 'Tran Thi Bac', 'driver2@example.com', 'password123', '0912345672', 'LIC002', 'AVAILABLE', 10.757, 106.660, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 2),
+(3, 'Le Van Chu', 'driver3@example.com', 'password123', '0912345673', 'LIC003', 'AVAILABLE', 16.061, 108.221, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 3),
+(4, 'Pham Thi Dinh', 'driver4@example.com', 'password123', '0912345674', 'LIC004', 'AVAILABLE', 21.032, 105.852, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 4),
+(5, 'Hoang Van Em', 'driver5@example.com', 'password123', '0912345675', 'LIC005', 'AVAILABLE', 10.038, 105.789, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 5),
+(6, 'Nguyen Thi Fu', 'driver6@example.com', 'password123', '0912345676', 'LIC006', 'AVAILABLE', 16.470, 107.590, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 6),
+(7, 'Tran Van Giau', 'driver7@example.com', 'password123', '0912345677', 'LIC007', 'AVAILABLE', 12.246, 109.195, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 7),
+(8, 'Le Thi Hai', 'driver8@example.com', 'password123', '0912345678', 'LIC008', 'AVAILABLE', 10.347, 107.085, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 8),
+(9, 'Pham Van Im', 'driver9@example.com', 'password123', '0912345679', 'LIC009', 'AVAILABLE', 20.952, 107.058, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 9),
+(10, 'Hoang Thi Thao', 'driver10@example.com', 'password123', '0912345680', 'LIC010', 'AVAILABLE', 21.593, 105.850, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 10),
+(11, 'Nguyen Van Khai', 'driver11@example.com', 'password123', '0912345681', 'LIC011', 'AVAILABLE', 21.187, 106.077, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 11),
+(12, 'Tran Thi Lam', 'driver12@example.com', 'password123', '0912345682', 'LIC012', 'AVAILABLE', 18.680, 105.693, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 12),
+(13, 'Le Van Mui', 'driver13@example.com', 'password123', '0912345683', 'LIC013', 'AVAILABLE', 10.216, 103.960, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 13),
+(14, 'Pham Thi Nhung', 'driver14@example.com', 'password123', '0912345684', 'LIC014', 'AVAILABLE', 11.941, 108.459, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 14),
+(15, 'Hoang Van Om', 'driver15@example.com', 'password123', '0912345685', 'LIC015', 'AVAILABLE', 12.682, 108.039, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 15),
+(16, 'Nguyen Thi Phuong', 'driver16@example.com', 'password123', '0912345686', 'LIC016', 'AVAILABLE', 10.534, 106.406, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 16),
+(17, 'Tran Van Quy', 'driver17@example.com', 'password123', '0912345687', 'LIC017', 'AVAILABLE', 10.958, 106.818, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 17),
+(18, 'Le Thi Rui', 'driver18@example.com', 'password123', '0912345688', 'LIC018', 'AVAILABLE', 11.008, 106.658, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 18),
+(19, 'Pham Van Sau', 'driver19@example.com', 'password123', '0912345689', 'LIC019', 'AVAILABLE', 10.361, 106.361, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 19),
+(20, 'Hoang Thi Thao', 'driver20@example.com', 'password123', '0912345690', 'LIC020', 'AVAILABLE', 10.016, 105.081, '2025-05-12 10:00:00', '2025-05-12 10:00:00', 20);
+
+-- Insert data into ambulances table
+INSERT INTO ambulances (ambulance_id, ambulance_number, driver_id, ambulance_status, ambulance_type, hospital_id, ambulance_created_at, ambulance_updated_at) VALUES
+(1, 'AMB001', 1, 'AVAILABLE', 'BASIC', 1, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(2, 'AMB002', 2, 'AVAILABLE', 'ADVANCED', 2, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(3, 'AMB003', 3, 'AVAILABLE', 'BASIC', 3, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(4, 'AMB004', 4, 'AVAILABLE', 'ADVANCED', 4, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(5, 'AMB005', 5, 'AVAILABLE', 'BASIC', 5, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(6, 'AMB006', 6, 'AVAILABLE', 'ADVANCED', 6, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(7, 'AMB007', 7, 'AVAILABLE', 'BASIC', 7, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(8, 'AMB008', 8, 'AVAILABLE', 'ADVANCED', 8, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(9, 'AMB009', 9, 'AVAILABLE', 'BASIC', 9, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(10, 'AMB010', 10, 'AVAILABLE', 'ADVANCED', 10, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(11, 'AMB011', 11, 'AVAILABLE', 'BASIC', 11, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(12, 'AMB012', 12, 'AVAILABLE', 'ADVANCED', 12, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(13, 'AMB013', 13, 'AVAILABLE', 'BASIC', 13, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(14, 'AMB014', 14, 'AVAILABLE', 'ADVANCED', 14, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(15, 'AMB015', 15, 'AVAILABLE', 'BASIC', 15, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(16, 'AMB016', 16, 'AVAILABLE', 'ADVANCED', 16, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(17, 'AMB017', 17, 'AVAILABLE', 'BASIC', 17, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(18, 'AMB018', 18, 'AVAILABLE', 'ADVANCED', 18, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(19, 'AMB019', 19, 'AVAILABLE', 'BASIC', 19, '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(20, 'AMB020', 20, 'AVAILABLE', 'ADVANCED', 20, '2025-05-12 10:00:00', '2025-05-12 10:00:00');
+
+-- Insert data into driverlocation table
+INSERT INTO driverlocation (id, driver_id, latitude, longitude) VALUES
+(1, 1, 21.008, 105.840),
+(2, 2, 10.757, 106.660),
+(3, 3, 16.061, 108.221),
+(4, 4, 21.032, 105.852),
+(5, 5, 10.038, 105.789),
+(6, 6, 16.470, 107.590),
+(7, 7, 12.246, 109.195),
+(8, 8, 10.347, 107.085),
+(9, 9, 20.952, 107.058),
+(10, 10, 21.593, 105.850),
+(11, 11, 21.187, 106.077),
+(12, 12, 18.680, 105.693),
+(13, 13, 10.216, 103.960),
+(14, 14, 11.941, 108.459),
+(15, 15, 12.682, 108.039),
+(16, 16, 10.534, 106.406),
+(17, 17, 10.958, 106.818),
+(18, 18, 11.008, 106.658),
+(19, 19, 10.361, 106.361),
+(20, 20, 10.016, 105.081);
+
+-- Insert data into patientlocation table
+INSERT INTO patientlocation (id, patient_id, latitude, longitude, destination_latitude, destination_longitude, booking_status, created_at, updated_at) VALUES
+(1, 1, 21.010, 105.841, 21.007, 105.839, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(2, 2, 10.758, 106.661, 10.756, 106.659, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(3, 3, 16.062, 108.222, 16.060, 108.220, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(4, 4, 21.033, 105.853, 21.031, 105.851, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(5, 5, 10.039, 105.790, 10.037, 105.788, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(6, 6, 16.471, 107.591, 16.469, 107.589, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(7, 7, 12.247, 109.196, 12.245, 109.194, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(8, 8, 10.348, 107.086, 10.346, 107.084, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(9, 9, 20.953, 107.059, 20.951, 107.057, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(10, 10, 21.594, 105.851, 21.592, 105.849, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(11, 11, 21.188, 106.078, 21.186, 106.076, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(12, 12, 18.681, 105.694, 18.679, 105.692, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(13, 13, 10.217, 103.961, 10.215, 103.959, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(14, 14, 11.942, 108.460, 11.940, 108.458, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(15, 15, 12.683, 108.040, 12.681, 108.038, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(16, 16, 10.535, 106.407, 10.533, 106.405, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(17, 17, 10.959, 106.819, 10.957, 106.817, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(18, 18, 11.009, 106.659, 11.007, 106.657, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(19, 19, 10.362, 106.362, 10.360, 106.360, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00'),
+(20, 20, 10.017, 105.082, 10.015, 105.080, 'PENDING', '2025-05-12 10:00:00', '2025-05-12 10:00:00');
+
+-- Insert data into admins table
+INSERT INTO admins (admin_id, admin_name, admin_email, admin_password, admin_phone, admin_address, admin_created_at, admin_updated_at) VALUES
+(1, 'Admin One', 'admin1@example.com', 'admin123', '0901234561', '789 Tran Hung Dao, Hanoi', '2025-05-12 10:00:00', '2025-05-12 10:00:00');
+
+-- Thêm dữ liệu cho 10 khoa vào bảng departments với một câu lệnh INSERT INTO duy nhất
+
+INSERT INTO departments (department_id, department_name, location, department_img, department_description, summary) VALUES
+-- Khoa Tim mạch: Chuyên chẩn đoán và điều trị các bệnh tim mạch, sử dụng công nghệ tiên tiến như siêu âm tim và đặt stent.
+(1, 'Cardiology', 'Hanoi', 'https://benhvienthucuc.vn/wp-content/uploads/2021/05/kham-tim-mach-la-kham-nhung-gi.jpg', 'The Cardiology Department at our hospital is dedicated to providing world-class care for patients with heart and cardiovascular conditions. Our team of highly skilled cardiologists and cardiac surgeons specializes in diagnosing and treating a wide range of heart-related disorders, including coronary artery disease, heart failure, valvular heart diseases, and arrhythmias. We utilize cutting-edge diagnostic tools such as echocardiograms, stress tests, and cardiac catheterization to ensure accurate diagnoses. Our advanced treatment options include minimally invasive procedures like angioplasty, stent placement, and pacemaker implantation, as well as complex open-heart surgeries. With a patient-centered approach, we offer personalized treatment plans, preventive care, and cardiac rehabilitation programs to improve long-term heart health and quality of life.', 'Comprehensive heart care delivered by expert cardiologists using state-of-the-art technology to diagnose, treat, and prevent cardiovascular diseases, ensuring optimal heart health for every patient.'),
+-- Khoa Thần kinh: Tập trung vào các bệnh về não và hệ thần kinh, cung cấp chẩn đoán bằng MRI, EEG và điều trị đột quỵ, động kinh.
+(2, 'Neurology', 'Ho Chi Minh City', 'https://taimuihongsg.com/wp-content/uploads/2013/05/noi-than-kinh_taimuihongsg.jpg', 'Our Neurology Department is a leader in the diagnosis and management of disorders affecting the brain, spinal cord, peripheral nerves, and muscles. Our team of expert neurologists and neurosurgeons is equipped to handle complex conditions such as stroke, epilepsy, Parkinson’s disease, multiple sclerosis, and Alzheimer’s disease. We employ advanced diagnostic technologies, including electroencephalography (EEG), magnetic resonance imaging (MRI), and nerve conduction studies, to provide precise evaluations. Treatment options range from medical management and neurorehabilitation to advanced neurosurgical interventions. Our multidisciplinary approach ensures comprehensive care, including collaboration with physical therapists and speech therapists to support patient recovery and improve neurological function.', 'Specialized care for brain and nervous system disorders, offering advanced diagnostics and treatments to enhance patient outcomes and quality of life.'),
+-- Khoa Chấn thương chỉnh hình: Điều trị các bệnh xương khớp, cung cấp phẫu thuật ít xâm lấn và phục hồi chức năng.
+(3, 'Orthopedics', 'Da Nang', 'https://www.fvhospital.com/wp-content/uploads/2017/02/ms-orhs-services.jpg', 'The Orthopedics Department specializes in the diagnosis, treatment, and rehabilitation of musculoskeletal conditions affecting bones, joints, muscles, ligaments, and tendons. Our experienced orthopedic surgeons and specialists treat a wide range of conditions, from fractures and sports injuries to arthritis, spinal deformities, and congenital disorders. We offer advanced surgical techniques, including minimally invasive arthroscopy, joint replacement surgeries (hip, knee, and shoulder), and spinal fusion procedures. Our department also provides comprehensive rehabilitation programs, including physical therapy and pain management, to restore mobility and function. With state-of-the-art imaging and surgical facilities, we ensure precise diagnoses and effective treatments tailored to each patient’s needs.', 'Expert care for bones, joints, and muscles, delivering advanced surgical and non-surgical solutions to restore mobility and improve quality of life.'),
+-- Khoa Nhi: Chăm sóc toàn diện cho trẻ em, từ tiêm chủng đến điều trị các bệnh lý nhi khoa phức tạp.
+(4, 'Pediatrics', 'Can Tho', 'https://www.benhvientwg.vn/Data/Sites/1/News/236/fotolia_49195925_subscription_monthly_xl,640,0,0,0.jpg', 'Our Pediatrics Department is committed to providing exceptional healthcare for infants, children, and adolescents, ensuring their physical, emotional, and developmental well-being. Our team of compassionate pediatricians and pediatric specialists offers a full spectrum of services, including routine check-ups, vaccinations, growth and developmental assessments, and management of acute and chronic pediatric illnesses. We treat conditions such as asthma, diabetes, infectious diseases, and congenital disorders with a family-centered approach. Our child-friendly facilities and advanced diagnostic tools, including pediatric imaging and laboratory services, ensure accurate diagnoses and effective treatments. We also provide parental guidance and support to promote healthy growth and development.', 'Dedicated to the health and well-being of children, offering comprehensive medical care and support for infants, children, and adolescents.'),
+-- Khoa Ung bướu: Chuyên về ung thư, cung cấp hóa trị, xạ trị, và liệu pháp miễn dịch với công nghệ hiện đại.
+(5, 'Oncology', 'Hai Phong', 'https://bvxuyena.com.vn/wp-content/uploads/2025/04/thumbnail-6x4-khoa-ung-buou-scaled.jpg', 'The Oncology Department is at the forefront of cancer care, offering advanced diagnostics, treatment, and support for patients with various types of cancer, including breast, lung, colorectal, and leukemia. Our multidisciplinary team of oncologists, radiologists, and oncology nurses provides personalized treatment plans that include chemotherapy, radiation therapy, immunotherapy, and targeted therapies. We utilize cutting-edge technologies such as PET-CT scans and molecular profiling to ensure precise diagnoses and tailored treatments. Our department also offers supportive care services, including pain management, nutritional counseling, and psychological support, to enhance the quality of life for cancer patients and their families.', 'Leading cancer care with personalized treatment plans, advanced therapies, and comprehensive support to fight cancer and improve patient outcomes.'),
+-- Khoa Da liễu: Điều trị các bệnh về da, tóc, móng với các phương pháp tiên tiến như laser và lột hóa học.
+(6, 'Dermatology', 'Hue', 'https://www.umcclinic.com.vn/Data/Sites/1/media/y-hoc-thuong-thuc/da-li%E1%BB%85u/khi-n%C3%A0o-c%E1%BA%A7n-kh%C3%A1m-chuy%C3%AAn-khoa-da-li%E1%BB%85u/bac-si-tham-kham-da-lieu.jpg', 'Our Dermatology Department specializes in the diagnosis and treatment of conditions affecting the skin, hair, and nails, ranging from common issues like acne and eczema to complex conditions such as psoriasis and skin cancer. Our expert dermatologists employ advanced diagnostic techniques, including skin biopsies and dermoscopy, to ensure accurate diagnoses. We offer a wide range of treatments, including topical and systemic therapies, laser treatments, cryotherapy, and cosmetic procedures such as chemical peels and Botox injections. Our department is dedicated to promoting skin health and enhancing patients’ confidence through personalized care and cutting-edge treatments.', 'Specialized care for skin, hair, and nail conditions, offering advanced medical and cosmetic treatments to promote healthy, radiant skin.'),
+-- Khoa Tiêu hóa: Chẩn đoán và điều trị các bệnh tiêu hóa như loét dạ dày, IBS, viêm gan bằng nội soi và các phương pháp tiên tiến.
+(7, 'Gastroenterology', 'Nha Trang', 'https://pkdktambinhan.com.vn/upload/filemanager/KHOA%20TI%C3%8AU%20H%C3%93A%20-%20GAN%20M%E1%BA%ACT/dat-kham-bac-si-tieu-hoa-gioi-tai-ha-noi_3d00c85f_b6c2_4c99_96df_acda6662f841.png', 'The Gastroenterology Department focuses on the diagnosis and treatment of disorders affecting the digestive system, including the esophagus, stomach, intestines, liver, pancreas, and gallbladder. Our team of gastroenterologists is skilled in managing conditions such as peptic ulcers, inflammatory bowel disease (IBD), hepatitis, and pancreatic disorders. We utilize state-of-the-art diagnostic procedures, including endoscopy, colonoscopy, and capsule endoscopy, to provide accurate diagnoses. Our treatment options include medical management, minimally invasive procedures, and nutritional counseling to promote digestive health and prevent complications. We are committed to improving patients’ quality of life through comprehensive and compassionate care.', 'Expert care for digestive health, offering advanced diagnostics and treatments for a wide range of gastrointestinal disorders.'),
+-- Khoa Mắt: Cung cấp dịch vụ chăm sóc mắt toàn diện, từ kính mắt đến phẫu thuật đục thủy tinh thể và LASIK.
+(8, 'Ophthalmology', 'Vung Tau', 'https://media.istockphoto.com/id/1189362136/vi/anh/b%C3%A1c-s%C4%A9-m%E1%BA%AFt-v%E1%BB%9Bi-n%E1%BB%AF-b%E1%BB%87nh-nh%C3%A2n-trong-m%E1%BB%99t-cu%E1%BB%99c-ki%E1%BB%83m-tra-t%E1%BA%A1i-ph%C3%B2ng-kh%C3%A1m-hi%E1%BB%87n-%C4%91%E1%BA%A1i.jpg?s=612x612&w=0&k=20&c=hejFnkFnbkZlNdAyfRlTNHrsAV-RtFzelpyHhoxeZuk=', 'Our Ophthalmology Department provides comprehensive eye care for patients of all ages, addressing conditions such as cataracts, glaucoma, macular degeneration, and diabetic retinopathy. Our team of skilled ophthalmologists uses advanced diagnostic tools, including optical coherence tomography (OCT) and visual field testing, to ensure precise evaluations. We offer a full range of treatments, from prescription glasses and contact lenses to complex procedures like cataract surgery, LASIK, and retinal surgery. Our department is dedicated to preserving and enhancing vision through personalized treatment plans and cutting-edge technology.', 'Advanced eye care services, delivering precise diagnostics and treatments to preserve and improve vision for patients of all ages.'),
+-- Khoa Tai Mũi Họng: Điều trị các bệnh về tai, mũi, họng như viêm xoang, mất thính lực, viêm amidan với các phẫu thuật tiên tiến.
+(9, 'ENT', 'Quang Ninh', 'https://baosonhospital.com/Upload/images-old/images/IMG_8037.JPG', 'The ENT (Ear, Nose, and Throat) Department specializes in the diagnosis and treatment of conditions affecting the ears, nose, throat, and related structures. Our expert otolaryngologists manage a wide range of conditions, including sinusitis, hearing loss, tonsillitis, and head and neck tumors. We utilize advanced diagnostic tools such as audiometry, nasal endoscopy, and imaging studies to ensure accurate diagnoses. Our treatment options include medical management, minimally invasive surgeries like tonsillectomy and septoplasty, and advanced procedures for complex conditions. We are committed to improving patients’ quality of life through expert care and innovative treatments.', 'Specialized care for ear, nose, and throat conditions, offering advanced diagnostics and treatments to enhance patient health and well-being.'),
+-- Khoa Tiết niệu: Điều trị các bệnh về đường tiết niệu và hệ sinh sản nam, sử dụng các kỹ thuật ít xâm lấn như laser.
+(10, 'Urology', 'Thai Nguyen', 'https://cdn.nhathuoclongchau.com.vn/unsafe/800x0/https://cms-prod.s3-sgn09.fptcloud.com/khoa_ngoai_tiet_nieu_la_gi_kham_benh_tiet_nieu_o_dau_tot_1_d93f436f78.jpg', 'The Urology Department provides expert care for disorders of the urinary tract and male reproductive system, including kidney stones, prostate conditions, bladder disorders, and male infertility. Our team of urologists utilizes advanced diagnostic tools, such as cystoscopy and urodynamic testing, to ensure accurate diagnoses. We offer a wide range of treatments, including minimally invasive surgeries like laser lithotripsy for kidney stones and transurethral resection of the prostate (TURP). Our patient-centered approach includes preventive care, medical management, and counseling to promote urological health and improve quality of life.', 'Comprehensive care for urinary and male reproductive health, offering advanced diagnostics and minimally invasive treatments for optimal outcomes.');
+
+
+
+-- Thêm dữ liệu cho 50 bác sĩ vào bảng doctors với một câu lệnh INSERT INTO duy nhất
+
+INSERT INTO doctors (doctor_id, doctor_name, doctor_phone, doctor_address, doctor_email, department_id, doctor_username, doctor_password, summary, doctor_image, doctor_price, doctor_description, working_status) VALUES
+-- Khoa Tim mạch (department_id: 1)
+-- Bác sĩ Nguyễn Văn An: Chuyên gia phẫu thuật tim với hơn 15 năm kinh nghiệm
+(1, 'Dr. Nguyen Van An', '0912345001', '123 Giai Phong, Hanoi', 'nguyen.an@hospital.com', 1, 'nguyenan1', 'password123', 'Expert in cardiology.', 'https://t4.ftcdn.net/jpg/02/60/04/09/360_F_260040900_oO6YW1sHTnKxby4GcjCvtypUCWjnQRg5.jpg', 100.00, 'Dr. Nguyen Van An joined our hospital in 2010 and is a leading cardiologist with over 15 years of experience in heart surgery and cardiovascular disease management. He graduated from Hanoi Medical University in 2005 with a degree in Cardiology and completed his residency at Bach Mai Hospital, Hanoi, from 2005 to 2008. Dr. An previously worked at Cho Ray Hospital, Ho Chi Minh City, from 2008 to 2010, where he performed over 300 successful angioplasties. His expertise includes complex procedures like coronary artery bypass grafting and valve repair. He has been recognized with the "Outstanding Cardiologist" award in 2015 and 2020 for his contributions to heart care innovation.', 'ACTIVE'),
+-- Bác sĩ Trần Thị Bích: Chuyên gia rối loạn nhịp tim với kinh nghiệm quốc tế
+(2, 'Dr. Tran Thi Bich', '0912345002', '456 Nguyen Trai, HCMC', 'tran.bich@hospital.com', 1, 'tranbich1', 'password123', 'Cardiology specialist.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZBWCliJUjCPiZRPvDOQnuXUS8XqBQPaXeLw&s', 105.00, 'Dr. Tran Thi Bich has been with our hospital since 2012, specializing in heart rhythm disorders. She earned her medical degree from Ho Chi Minh City University of Medicine and Pharmacy in 2006 and completed a fellowship in electrophysiology at Singapore General Hospital from 2009 to 2011. Dr. Bich worked at Vinmec International Hospital, Hanoi, from 2011 to 2012, focusing on pacemaker implantation and arrhythmia management. With over 14 years of experience, she has published multiple papers on atrial fibrillation and received the "Innovative Cardiologist" award in 2018. Her patient-centered approach ensures tailored treatment plans for complex cardiac cases.', 'ACTIVE'),
+-- Bác sĩ Lê Văn Cường: Chuyên gia suy tim với thành tích nổi bật
+(3, 'Dr. Le Van Cuong', '0912345003', '789 Hai Ba Trung, Da Nang', 'le.cuong@hospital.com', 1, 'lecuong1', 'password123', 'Heart disease expert.', 'https://static.vecteezy.com/system/resources/thumbnails/026/375/249/small_2x/ai-generative-portrait-of-confident-male-doctor-in-white-coat-and-stethoscope-standing-with-arms-crossed-and-looking-at-camera-photo.jpg', 102.00, 'Dr. Le Van Cuong joined our team in 2011 and is renowned for his expertise in managing heart failure. He graduated from Hue University of Medicine and Pharmacy in 2004 and completed his cardiology residency at Da Nang Hospital from 2004 to 2007. From 2007 to 2011, he worked at 108 Military Central Hospital, Hanoi, where he led heart failure clinics. Dr. Cuong has over 16 years of experience and has pioneered advanced heart failure therapies, earning the "Cardiology Excellence Award" in 2019. His research on cardiac resynchronization therapy has been published internationally.', 'ACTIVE'),
+-- Bác sĩ Phạm Thị Dung: Chuyên gia tim mạch không xâm lấn
+(4, 'Dr. Pham Thi Dung', '0912345004', '101 Trang Thi, Hanoi', 'pham.dung@hospital.com', 1, 'phamdung1', 'password123', 'Cardiologist.', 'https://thumbs.dreamstime.com/b/smiling-medical-doctor-woman-stethoscope-isolated-over-white-background-35552912.jpg', 98.00, 'Dr. Pham Thi Dung joined our hospital in 2013, specializing in non-invasive cardiology. She graduated from Hanoi Medical University in 2007 and completed her residency at Viet Duc Hospital, Hanoi, from 2007 to 2010. Dr. Dung worked at E Hospital, Hanoi, from 2010 to 2013, focusing on echocardiography and stress testing. With over 13 years of experience, she is skilled in diagnosing heart conditions using advanced imaging techniques. She received the "Best Diagnostic Cardiologist" award in 2021 for her precision in non-invasive diagnostics.', 'ACTIVE'),
+-- Bác sĩ Hoàng Văn Em: Chuyên gia can thiệp tim mạch
+(5, 'Dr. Hoang Van Em', '0912345005', '315 Nguyen Van Cu, Can Tho', 'hoangem@hospital.com', 1, 'hoangem1', 'password123', 'Cardiovascular expert.', 'https://plus.unsplash.com/premium_photo-1658506671316-0b293df7baselines/0b293df7c72b?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZG9jdG9yJTIwcG9ydHJhaXR8ZW58fDB8fHww', 103.00, 'Dr. Hoang Van Em has been with our hospital since 2014, excelling in interventional cardiology. He graduated from Can Tho University of Medicine and Pharmacy in 2008 and completed a fellowship in interventional cardiology at Cho Ray Hospital, Ho Chi Minh City, from 2010 to 2013. He previously worked at Can Tho General Hospital from 2011 to 2014, performing over 400 stent placements. With 12 years of experience, Dr. Em is adept at minimally invasive procedures like angioplasty. He was awarded the "Interventional Cardiology Innovator" in 2022 for his contributions to regional heart care advancements.', 'ACTIVE'),
+-- Bác sĩ Lê Đình Nguyễn: Chuyên gia can thiệp tim mạch với kinh nghiệm thực tiễn
+(51, 'Dr. Le Dinh Nguyen', '0349740970', 'Tan Thinh, Hoa Quy, Nhu Xuan, Thanh Hoa', 'ledinhnguyen19112000@gmail.com', 1, 'dinhnguyen', 'nguyen123', 'Cardiovascular expert.', 'https://hthaostudio.com/wp-content/uploads/2022/03/Anh-bac-si-nam-7-min.jpg', 100.00, 'Dr. Le Dinh Nguyen joined our hospital in 2015, specializing in interventional cardiology. He graduated from Hanoi Medical University in 2009 and completed his residency at Thanh Hoa General Hospital from 2009 to 2012. From 2012 to 2015, he worked at 108 Military Central Hospital, Hanoi, where he performed over 350 interventional procedures, including coronary stent placements. With 11 years of experience, Dr. Nguyen is recognized for his precision in complex cardiac interventions and received the "Rising Star in Cardiology" award in 2023 for his contributions to regional heart care.', 'ACTIVE'),
+-- Khoa Thần kinh (department_id: 2)
+-- Bác sĩ Nguyễn Thị Phương: Chuyên gia bệnh não và động kinh với kinh nghiệm quốc tế
+(6, 'Dr. Nguyen Thi Phuong', '0912345006', '16 Le Loi, Hue', 'nguyen.phuong@hospital.com', 2, 'nguyenphuong2', 'password123', 'Neurology specialist.', 'https://img.freepik.com/free-photo/female-doctor-hospital-with-stethoscope_23-2148827776.jpg?semt=ais_hybrid&w=740', 120.00, 'Dr. Nguyen Thi Phuong joined our hospital in 2010, specializing in brain disorders and epilepsy. She graduated from Hue University of Medicine and Pharmacy in 2004 and completed a fellowship in neurology at National Neuroscience Institute, Singapore, from 2007 to 2009. Dr. Phuong worked at Bach Mai Hospital, Hanoi, from 2009 to 2010, managing complex epilepsy cases. With over 16 years of experience, she is skilled in EEG interpretation and seizure management, earning the "Neurology Excellence Award" in 2017 for her work in epilepsy research.', 'ACTIVE'),
+-- Bác sĩ Trần Văn Giang: Chuyên gia quản lý đột quỵ với nhiều năm kinh nghiệm
+(7, 'Dr. Tran Van Giang', '0912345007', '19 Yersin, Nha Trang', 'tran.giang@hospital.com', 2, 'trangiang2', 'password123', 'Neurologist.', 'https://www.shutterstock.com/image-photo/portrait-handsome-male-doctor-stethoscope-600nw-2480850611.jpg', 122.00, 'Dr. Tran Van Giang has been with our hospital since 2012, focusing on stroke management. He graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2005 and completed his residency at Cho Ray Hospital from 2005 to 2008. From 2008 to 2012, he worked at 115 People’s Hospital, Ho Chi Minh City, leading stroke intervention programs. With 15 years of experience, Dr. Giang has published research on thrombolytic therapy and received the "Stroke Care Innovator" award in 2019.', 'ACTIVE'),
+-- Bác sĩ Lê Thị Hoa: Chuyên gia bệnh thoái hóa thần kinh
+(8, 'Dr. Le Thi Hoa', '0912345008', '123 Le Loi, Vung Tau', 'le.hoa@hospital.com', 2, 'lehoa2', 'password123', 'Brain specialist.', 'https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDI0LTA1L3Jhd3BpeGVsb2ZmaWNlMV9waG90b2dyYXBoeV9vZl9hbl9zb3V0aF9pbmRpYW5fd29tZW5fYXNfYV9kb2N0b19kMzAxMDM3Zi03MDUzLTQxNDAtYmYyZS1lZDFlYWE0YTM3NDQucG5n.png', 118.00, 'Dr. Le Thi Hoa joined our hospital in 2011, specializing in neurodegenerative diseases like Parkinson’s and Alzheimer’s. She graduated from Hanoi Medical University in 2006 and completed a fellowship at National Hospital for Neurology and Neurosurgery, London, from 2008 to 2010. Dr. Hoa worked at Vinmec International Hospital from 2010 to 2011, managing movement disorder clinics. With 14 years of experience, she has contributed to research on Parkinson’s disease and received the "Neurology Research Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Phạm Văn Ích: Chuyên gia đau đầu và đau nửa đầu
+(9, 'Dr. Pham Van Ich', '0912345009', 'Ha Long, Quang Ninh', 'pham.ich@hospital.com', 2, 'phamich2', 'password123', 'Neurology expert.', 'https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg', 121.00, 'Dr. Pham Van Ich has been with our hospital since 2013, focusing on migraines and headaches. He graduated from Hue University of Medicine and Pharmacy in 2007 and completed his residency at Da Nang Hospital from 2007 to 2010. From 2010 to 2013, he worked at 108 Military Central Hospital, Hanoi, specializing in headache management. With 13 years of experience, Dr. Ich has developed innovative migraine therapies and was awarded the "Headache Specialist Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Thị Kim: Chuyên gia rối loạn thần kinh ngoại biên
+(10, 'Dr. Hoang Thi Kim', '0912345010', '479 Luong Ngoc Quyen, Thai Nguyen', 'hoang.kim@hospital.com', 2, 'hoangkim2', 'password123', 'Neurologist.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwHX7cwtsU3OMkeZcSq1DDy1Sx5G1CXNid5w&s', 119.00, 'Dr. Hoang Thi Kim joined our hospital in 2012, specializing in peripheral nerve disorders. She graduated from Hanoi Medical University in 2006 and completed a fellowship in neurophysiology at Seoul National University Hospital from 2009 to 2011. Dr. Kim worked at Viet Duc Hospital, Hanoi, from 2011 to 2012, focusing on nerve conduction studies. With 14 years of experience, she has published research on neuropathy and received the "Neurology Innovation Award" in 2018.', 'ACTIVE'),
+-- Khoa Chấn thương chỉnh hình (department_id: 3)
+-- Bác sĩ Nguyễn Văn Khánh: Chuyên gia phẫu thuật xương khớp
+(11, 'Dr. Nguyen Van Khanh', '0912345011', '123 Nguyen Trai, Bac Ninh', 'nguyen.khanh@hospital.com', 3, 'nguyenkhanh3', 'password123', 'Orthopedic surgeon.', 'https://snibbs.co/cdn/shop/articles/What_are_the_Challenges_of_Being_a_Doctor.jpg?v=1684314843', 110.00, 'Dr. Nguyen Van Khanh joined our hospital in 2010, specializing in bone and joint surgery. He graduated from Hanoi Medical University in 2004 and completed his residency at Viet Duc Hospital from 2004 to 2007. From 2007 to 2010, he worked at Bach Mai Hospital, performing over 500 orthopedic surgeries. With 16 years of experience, Dr. Khanh is skilled in complex fracture repairs and received the "Orthopedic Excellence Award" in 2019 for his contributions to surgical innovation.', 'ACTIVE'),
+-- Bác sĩ Trần Thị Lan: Chuyên gia thay khớp
+(12, 'Dr. Tran Thi Lan', '0912345012', '178 Tran Phu, Vinh', 'tran.lan@hospital.com', 3, 'tranlan3', 'password123', 'Orthopedist.', 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA5L3Jhd3BpeGVsb2ZmaWNlMl9waG90b19vZl9hX2JsYWNrX3BsdXNfc2l6ZV9mZW1hbGVfZG9jdG9yX2luX2hvc19mOGU4MTBlMi1kOWEyLTQ5OTMtOWM0Zi1kNWI2OTQ5ODVmZTNfMi5qcGc.jpg', 112.00, 'Dr. Tran Thi Lan has been with our hospital since 2012, focusing on joint replacement surgeries. She graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2006 and completed a fellowship in orthopedics at Singapore General Hospital from 2009 to 2011. Dr. Lan worked at Cho Ray Hospital from 2011 to 2012, performing over 200 hip and knee replacements. With 14 years of experience, she has pioneered minimally invasive techniques and received the "Joint Replacement Specialist Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Văn Minh: Chuyên gia gãy xương và trật khớp
+(13, 'Dr. Le Van Minh', '0912345013', 'Duong Dong, Phu Quoc', 'le.minh@hospital.com', 3, 'leminh3', 'password123', 'Bone specialist.', 'https://online-learning-college.com/wp-content/uploads/2023/01/Qualifications-to-Become-a-Doctor--scaled.jpg', 108.00, 'Dr. Le Van Minh joined our hospital in 2011, specializing in fractures and dislocations. He graduated from Hue University of Medicine and Pharmacy in 2005 and completed his residency at Da Nang Hospital from 2005 to 2008. From 2008 to 2011, he worked at 108 Military Central Hospital, Hanoi, managing trauma cases. With 15 years of experience, Dr. Minh is skilled in orthopedic trauma care and received the "Trauma Specialist Award" in 2018.', 'ACTIVE'),
+-- Bác sĩ Phạm Thị Ngà: Chuyên gia phẫu thuật cột sống
+(14, 'Dr. Pham Thi Nga', '0912345014', '4 Pham Ngoc Thach, Da Lat', 'pham.nga@hospital.com', 3, 'phamnga3', 'password123', 'Orthopedic expert.', 'https://images.stockcake.com/public/6/a/7/6a7cde76-ad7d-4445-b096-47822b2e6dc4_large/confident-female-doctor-stockcake.jpg', 111.00, 'Dr. Pham Thi Nga joined our hospital in 2013, specializing in spinal surgeries. She graduated from Hanoi Medical University in 2007 and completed a fellowship in spinal orthopedics at National University Hospital, Singapore, from 2010 to 2012. Dr. Nga worked at E Hospital, Hanoi, from 2012 to 2013, focusing on spinal deformities. With 13 years of experience, she has performed over 300 spinal surgeries and received the "Spinal Surgery Innovator" award in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Văn On: Chuyên gia viêm khớp và đau khớp
+(15, 'Dr. Hoang Van On', '0912345015', '2 Nguyen Tat Thanh, Buon Ma Thuot', 'hoang.on@hospital.com', 3, 'hoangon3', 'password123', 'Joint specialist.', 'https://www.mua.edu/uploads/sites/10/2023/03/board-certified-doctor-meaning.webp', 109.00, 'Dr. Hoang Van On joined our hospital in 2012, specializing in arthritis and joint pain management. He graduated from Can Tho University of Medicine and Pharmacy in 2006 and completed his residency at Can Tho General Hospital from 2006 to 2009. From 2009 to 2012, he worked at Vinmec International Hospital, managing arthritis clinics. With 14 years of experience, Dr. On has developed innovative pain management protocols and received the "Arthritis Care Award" in 2019.', 'ACTIVE'),
+-- Khoa Nhi (department_id: 4)
+-- Bác sĩ Nguyễn Thị Quý: Chuyên gia chăm sóc sức khỏe trẻ em
+(16, 'Dr. Nguyen Thi Quy', '0912345016', '123 Nguyen Thong, Long An', 'nguyen.quy@hospital.com', 4, 'nguyenquy4', 'password123', 'Pediatric care.', 'https://img.freepik.com/free-photo/beautiful-caucasian-oculist-woman-wearing-robe-optometry-glasses-with-serious-expression-face-simple-natural-looking-camera_839833-6929.jpg?semt=ais_hybrid&w=740', 90.00, 'Dr. Nguyen Thi Quy joined our hospital in 2010, specializing in pediatric healthcare. She graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2004 and completed her residency at Children’s Hospital 1, Ho Chi Minh City, from 2004 to 2007. From 2007 to 2010, she worked at Can Tho Children’s Hospital, managing pediatric wards. With 16 years of experience, Dr. Quy is skilled in child development assessments and received the "Pediatric Excellence Award" in 2018 for her contributions to child health.', 'ACTIVE'),
+-- Bác sĩ Trần Văn Sơn: Chuyên gia chăm sóc sơ sinh
+(17, 'Dr. Tran Van Son', '0912345017', '2 Dong Khoi, Bien Hoa', 'tran.son@hospital.com', 4, 'transon4', 'password123', 'Pediatrician.', 'https://familydoctor.org/wp-content/uploads/2018/02/41808433_l.jpg', 92.00, 'Dr. Tran Van Son has been with our hospital since 2012, focusing on neonatal care. He graduated from Hanoi Medical University in 2006 and completed a fellowship in neonatology at National Children’s Hospital, Hanoi, from 2008 to 2011. From 2011 to 2012, he worked at Tu Du Hospital, Ho Chi Minh City, managing NICU cases. With 14 years of experience, Dr. Son has saved numerous premature infants and received the "Neonatal Care Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Thị Tuyết: Chuyên gia nhiễm trùng nhi khoa
+(18, 'Dr. Le Thi Tuyet', '0912345018', '5 Pham Ngoc Thach, Thu Dau Mot', 'le.tuyet@hospital.com', 4, 'letuyet4', 'password123', 'Child specialist.', 'https://t4.ftcdn.net/jpg/06/47/16/29/360_F_647162966_SFu8GP6awkeW0OnFnAxPjiGXSoeme4ht.jpg', 88.00, 'Dr. Le Thi Tuyet joined our hospital in 2011, specializing in pediatric infections. She graduated from Hue University of Medicine and Pharmacy in 2005 and completed her residency at Children’s Hospital 2, Ho Chi Minh City, from 2005 to 2008. From 2008 to 2011, she worked at Dong Nai Children’s Hospital, managing infectious disease cases. With 15 years of experience, Dr. Tuyet has developed protocols for pediatric infection control and received the "Infection Control Award" in 2019.', 'ACTIVE'),
+-- Bác sĩ Phạm Văn Út: Chuyên gia rối loạn phát triển trẻ em
+(19, 'Dr. Pham Van Ut', '0912345019', '123 Le Loi, My Tho', 'pham.ut@hospital.com', 4, 'phamut4', 'password123', 'Pediatric expert.', 'https://img.freepik.com/free-photo/portrait-male-doctor_23-2148480369.jpg?semt=ais_hybrid&w=740', 91.00, 'Dr. Pham Van Ut joined our hospital in 2013, focusing on child growth disorders. He graduated from Can Tho University of Medicine and Pharmacy in 2007 and completed a fellowship in pediatric endocrinology at National Children’s Hospital, Hanoi, from 2010 to 2012. From 2012 to 2013, he worked at My Tho General Hospital, managing developmental disorders. With 13 years of experience, Dr. Ut has published research on pediatric growth and received the "Pediatric Endocrinology Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Thị Vĩnh: Chuyên gia dị ứng nhi khoa
+(20, 'Dr. Hoang Thi Vinh', '0912345020', '46 Le Loi, Rach Gia', 'hoangvinh@hospital.com', 4, 'hoangvinh4', 'password123', 'Pediatric specialist.', 'https://t4.ftcdn.net/jpg/03/20/74/45/360_F_320744517_TaGkT7aRlqqWdfGUuzRKDABtFEoN5CiO.jpg', 89.00, 'Dr. Hoang Thi Vinh joined our hospital in 2012, specializing in pediatric allergies. She graduated from Hanoi Medical University in 2006 and completed a fellowship in pediatric allergy at Children’s Hospital 1, Ho Chi Minh City, from 2009 to 2011. From 2011 to 2012, she worked at Kien Giang General Hospital, managing allergy clinics. With 14 years of experience, Dr. Vinh has developed allergy testing protocols and received the "Pediatric Allergy Specialist Award" in 2020.', 'ACTIVE'),
+-- Khoa Ung bướu (department_id: 5)
+-- Bác sĩ Nguyễn Văn Xuân: Chuyên gia điều trị ung thư
+(21, 'Dr. Nguyen Van Xuan', '0912345021', '123 Giai Phong, Hanoi', 'nguyenxuan@hospital.com', 5, 'nguyenxuan5', 'password123', 'Oncology expert.', 'https://i.pinimg.com/736x/f4/c9/ef/f4c9ef33d04a22050038e9e53eeb7d85.jpg', 130.00, 'Dr. Nguyen Van Xuan joined our hospital in 2010, specializing in cancer treatment. He graduated from Hanoi Medical University in 2004 and completed a fellowship in oncology at National Cancer Centre, Singapore, from 2007 to 2009. From 2009 to 2010, he worked at K Hospital, Hanoi, managing chemotherapy programs. With 16 years of experience, Dr. Xuan is skilled in targeted therapies and received the "Oncology Excellence Award" in 2018 for his contributions to cancer care.', 'ACTIVE'),
+-- Bác sĩ Trần Thị Yến: Chuyên gia hóa trị liệu
+(22, 'Dr. Tran Thi Yen', '0912345022', '456 Nguyen Trai, HCMC', 'tranyen@hospital.com', 5, 'tranyen5', 'password123', 'Oncologist.', 'https://thumbs.dreamstime.com/b/indian-beautiful-female-doctor-18398918.jpg', 132.00, 'Dr. Tran Thi Yen has been with our hospital since 2012, focusing on chemotherapy. She graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2006 and completed a fellowship in medical oncology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, she worked at Oncology Hospital, Ho Chi Minh City, leading chemotherapy protocols. With 14 years of experience, Dr. Yen has published research on chemotherapy regimens and received the "Chemotherapy Innovator Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Văn Ánh: Chuyên gia xạ trị
+(23, 'Dr. Le Van Anh', '0912345023', '789 Hai Ba Trung, Da Nang', 'leanh@hospital.com', 5, 'leanh5', 'password123', 'Cancer specialist.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv3FkSx0rxzkqmcJHKTM8ElqTI0RGsMMmQmovDRPMOJG3N8c2osbeCQri9A5btve5P_No&usqp=CAU', 128.00, 'Dr. Le Van Anh joined our hospital in 2011, specializing in radiation therapy. He graduated from Hue University of Medicine and Pharmacy in 2005 and completed a fellowship in radiation oncology at K Hospital, Hanoi, from 2008 to 2010. From 2010 to 2011, he worked at Da Nang Oncology Hospital, managing radiation therapy programs. With 15 years of experience, Dr. Anh has advanced radiation techniques and received the "Radiation Therapy Award" in 2019.', 'ACTIVE'),
+-- Bác sĩ Phạm Thị Bình: Chuyên gia ung thư vú
+(24, 'Dr. Pham Thi Binh', '0912345024', '101 Trang Thi, Hanoi', 'phambinh@hospital.com', 5, 'phambinh5', 'password123', 'Oncology specialist.', 'https://media.istockphoto.com/id/1292012984/photo/portrait-female-doctor-stock-photo.jpg?s=612x612&w=0&k=20&c=u75XzgB3QWKj9EM3WQyhQQpgU9OhKaRe77a-LP7I1M8=', 131.00, 'Dr. Pham Thi Binh joined our hospital in 2013, focusing on breast cancer treatment. She graduated from Hanoi Medical University in 2007 and completed a fellowship in breast oncology at National Cancer Centre, Singapore, from 2010 to 2012. From 2012 to 2013, she worked at K Hospital, Hanoi, managing breast cancer clinics. With 13 years of experience, Dr. Binh has developed innovative breast cancer therapies and received the "Breast Cancer Specialist Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Văn Cảnh: Chuyên gia ung thư phổi
+(25, 'Dr. Hoang Van Canh', '0912345025', '315 Nguyen Van Cu, Can Tho', 'hoang.canh@hospital.com', 5, 'hoangcanh5', 'password123', 'Tumor expert.', 'https://img.freepik.com/premium-photo/doctor-man-with-glasses-stethoscope-is-standing-his-sunny-hospital-office-perfect-medical-service-clinic-happy-future-medicine-healthcare_665183-10952.jpg', 129.00, 'Dr. Hoang Van Canh joined our hospital in 2012, specializing in lung cancer treatment. He graduated from Can Tho University of Medicine and Pharmacy in 2006 and completed a fellowship in thoracic oncology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, he worked at Can Tho Oncology Hospital, managing lung cancer cases. With 14 years of experience, Dr. Canh has published research on lung cancer therapies and received the "Lung Cancer Specialist Award" in 2020.', 'ACTIVE'),
+-- Khoa Da liễu (department_id: 6)
+-- Bác sĩ Nguyễn Thị Diệu: Chuyên gia chăm sóc da
+(26, 'Dr. Nguyen Thi Dieu', '0912345026', '16 Le Loi, Hue', 'nguyen.dieu@hospital.com', 6, 'nguyendieu6', 'password123', 'Dermatology specialist.', 'https://media.istockphoto.com/id/1301595548/photo/female-doctor-stock-photo.jpg?s=612x612&w=0&k=20&c=s9kTlQCWJcYmCyMwYwJfTq7jiC1NfHaXzZyGhi4fRHM=', 95.00, 'Dr. Nguyen Thi Dieu joined our hospital in 2010, specializing in skin care. She graduated from Hue University of Medicine and Pharmacy in 2004 and completed a fellowship in dermatology at National Skin Centre, Singapore, from 2007 to 2009. From 2009 to 2010, she worked at Hue Central Hospital, managing dermatology clinics. With 16 years of experience, Dr. Dieu is skilled in laser therapy and received the "Dermatology Excellence Award" in 2018.', 'ACTIVE'),
+-- Bác sĩ Trần Văn En: Chuyên gia dị ứng da
+(27, 'Dr. Tran Van En', '0912345027', '19 Yersin, Nha Trang', 'tran.en@hospital.com', 6, 'tranen6', 'password123', 'Dermatologist.', 'https://nypost.com/wp-content/uploads/sites/2/2020/08/black-doctor-1.jpg?quality=75&strip=all&w=744', 97.00, 'Dr. Tran Van En joined our hospital in 2012, focusing on skin allergies. He graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2006 and completed a fellowship in dermatology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, he worked at Nha Trang General Hospital, managing allergy clinics. With 14 years of experience, Dr. En has developed allergy testing protocols and received the "Skin Allergy Specialist Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Thị Giàu: Chuyên gia mụn và chàm
+(28, 'Dr. Le Thi Giau', '0912345028', '123 Le Loi, Vung Tau', 'le.giau@hospital.com', 6, 'legiau6', 'password123', 'Skin specialist.', 'https://i.pinimg.com/736x/c5/a3/90/c5a3904b38eb241dd03dd30889599dc4.jpg', 93.00, 'Dr. Le Thi Giau joined our hospital in 2011, specializing in acne and eczema. She graduated from Hanoi Medical University in 2005 and completed her residency at Viet Duc Hospital from 2005 to 2008. From 2008 to 2011, she worked at Vung Tau General Hospital, managing dermatology cases. With 15 years of experience, Dr. Giau has developed effective acne treatments and received the "Dermatology Innovation Award" in 2019.', 'ACTIVE'),
+-- Bác sĩ Phạm Văn Hùng: Chuyên gia da liễu thẩm mỹ
+(29, 'Dr. Pham Van Hung', '0912345029', 'Ha Long, Quang Ninh', 'pham.hung@hospital.com', 6, 'phamhung6', 'password123', 'Dermatology expert.', 'https://m.media-amazon.com/images/S/pv-target-images/069353fc8605a620c054a3e81e88d28aa0579632824878b9fdeed43b39e7ca55._SX1080_FMjpg_.jpg', 96.00, 'Dr. Pham Van Hung joined our hospital in 2013, focusing on cosmetic dermatology. He graduated from Hue University of Medicine and Pharmacy in 2007 and completed a fellowship in cosmetic dermatology at National Skin Centre, Singapore, from 2010 to 2012. From 2012 to 2013, he worked at Vinmec International Hospital, managing aesthetic procedures. With 13 years of experience, Dr. Hung is skilled in Botox and fillers and received the "Cosmetic Dermatology Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Thị Khánh: Chuyên gia bệnh da mãn tính
+(30, 'Dr. Hoang Thi Khanh', '0912345030', '479 Luong Ngoc Quyen, Thai Nguyen', 'hoang.khanh@hospital.com', 6, 'hoangkhanh6', 'password123', 'Skin care specialist.', 'https://t4.ftcdn.net/jpg/06/39/45/45/360_F_639454588_dg0jlrOtHuRFzMdAbJZTdw0XrysWa73y.jpg', 94.00, 'Dr. Hoang Thi Khanh joined our hospital in 2012, specializing in chronic skin conditions. She graduated from Hanoi Medical University in 2006 and completed a fellowship in dermatology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, she worked at Thai Nguyen General Hospital, managing psoriasis and eczema cases. With 14 years of experience, Dr. Khanh has developed innovative skin therapies and received the "Chronic Skin Disease Award" in 2020.', 'ACTIVE'),
+-- Khoa Tiêu hóa (department_id: 7)
+-- Bác sĩ Nguyễn Văn Linh: Chuyên gia sức khỏe tiêu hóa
+(31, 'Dr. Nguyen Van Linh', '0912345031', '123 Nguyen Trai, Bac Ninh', 'nguyen.linh@hospital.com', 7, 'nguyenlinh7', 'password123', 'Gastroenterology expert.', 'https://i.pinimg.com/736x/7e/91/b7/7e91b721691322422919eec7dc039618.jpg', 115.00, 'Dr. Nguyen Van Linh joined our hospital in 2010, specializing in digestive health. He graduated from Hanoi Medical University in 2004 and completed a fellowship in gastroenterology at National University Hospital, Singapore, from 2007 to 2009. From 2009 to 2010, he worked at Bach Mai Hospital, managing GI clinics. With 16 years of experience, Dr. Linh is skilled in endoscopy and received the "Gastroenterology Excellence Award" in 2018.', 'ACTIVE'),
+-- Bác sĩ Trần Thị Mai: Chuyên gia bệnh gan
+(32, 'Dr. Tran Thi Mai', '0912345032', '178 Tran Phu, Vinh', 'tran.mai@hospital.com', 7, 'tranmai7', 'password123', 'Gastroenterologist.', 'https://t3.ftcdn.net/jpg/05/85/85/10/360_F_585851080_bl0NqsZWOfoNFBS58Uka2D6BjJidRSo2.jpg', 117.00, 'Dr. Tran Thi Mai joined our hospital in 2012, focusing on liver diseases. She graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2006 and completed a fellowship in hepatology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, she worked at 115 People’s Hospital, managing hepatitis cases. With 14 years of experience, Dr. Mai has published research on liver fibrosis and received the "Hepatology Specialist Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Văn Nam: Chuyên gia rối loạn tiêu hóa
+(33, 'Dr. Le Van Nam', '0912345033', 'Duong Dong, Phu Quoc', 'le.nam@hospital.com', 7, 'lenam7', 'password123', 'Digestive specialist.', 'https://p16-common-sign-sg.tiktokcdn-us.com/tos-alisg-avt-0068/516c3963d7aaca26586ee4e900c304f3~tplv-tiktokx-cropcenter:720:720.jpeg?dr=9640&refresh_token=d9011ea4&x-expires=1752289200&x-signature=9jfz6Hwmo8Pe11n5pEkpAwlxLm4%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=useast8', 113.00, 'Dr. Le Van Nam joined our hospital in 2011, specializing in gastrointestinal disorders. He graduated from Hue University of Medicine and Pharmacy in 2005 and completed his residency at Da Nang Hospital from 2005 to 2008. From 2008 to 2011, he worked at 108 Military Central Hospital, managing IBD cases. With 15 years of experience, Dr. Nam has developed colonoscopy protocols and received the "GI Specialist Award" in 2019.', 'ACTIVE'),
+-- Bác sĩ Phạm Thị Oanh: Chuyên gia nội soi
+(34, 'Dr. Pham Thi Oanh', '0912345034', '4 Pham Ngoc Thach, Da Lat', 'pham.oanh@hospital.com', 7, 'phamoanh7', 'password123', 'Gastroenterology specialist.', 'https://www.shutterstock.com/image-photo/medical-concept-indian-doctor-uniform-600nw-2313987627.jpg', 116.00, 'Dr. Pham Thi Oanh joined our hospital in 2013, focusing on endoscopy. She graduated from Hanoi Medical University in 2007 and completed a fellowship in gastroenterology at National University Hospital, Singapore, from 2010 to 2012. From 2012 to 2013, she worked at E Hospital, Hanoi, performing endoscopic procedures. With 13 years of experience, Dr. Oanh is skilled in capsule endoscopy and received the "Endoscopy Innovator Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Văn Phúc: Chuyên gia loét và trào ngược
+(35, 'Dr. Hoang Van Phuc', '0912345035', '2 Nguyen Tat Thanh, Buon Ma Thuot', 'hoang.phuc@hospital.com', 7, 'hoangphuc7', 'password123', 'Digestive expert.', 'https://www.medclean.com/wp-content/uploads/2018/03/doctor-in-white-coat-blog.jpg', 114.00, 'Dr. Hoang Van Phuc joined our hospital in 2012, specializing in ulcers and reflux. He graduated from Can Tho University of Medicine and Pharmacy in 2006 and completed his residency at Can Tho General Hospital from 2006 to 2009. From 2009 to 2012, he worked at Vinmec International Hospital, managing GERD cases. With 14 years of experience, Dr. Phuc has developed reflux treatment protocols and received the "GI Care Award" in 2020.', 'ACTIVE'),
+-- Khoa Mắt (department_id: 8)
+-- Bác sĩ Nguyễn Thị Quỳnh: Chuyên gia chăm sóc mắt
+(36, 'Dr. Nguyen Thi Quynh', '0912345036', '123 Nguyen Thong, Long An', 'nguyen.quynh@hospital.com', 8, 'nguyenquynh8', 'password123', 'Eye specialist.', 'https://t3.ftcdn.net/jpg/04/84/71/16/360_F_484711645_gtucSoRrSYOZ5tljGiYAwFDZkEngSMqR.jpg', 100.00, 'Dr. Nguyen Thi Quynh joined our hospital in 2010, specializing in eye care. She graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2004 and completed a fellowship in ophthalmology at National University Hospital, Singapore, from 2007 to 2009. From 2009 to 2010, she worked at Ho Chi Minh City Eye Hospital, managing vision clinics. With 16 years of experience, Dr. Quynh is skilled in OCT diagnostics and received the "Ophthalmology Excellence Award" in 2018.', 'ACTIVE'),
+-- Bác sĩ Trần Văn Sáng: Chuyên gia đục thủy tinh thể
+(37, 'Dr. Tran Van Sang', '0912345037', '2 Dong Khoi, Bien Hoa', 'tran.sang@hospital.com', 8, 'transang8', 'password123', 'Ophthalmologist.', 'https://clipart-library.com/2024/pics-of-a-doctor/pics-of-a-doctor-4.png', 102.00, 'Dr. Tran Van Sang joined our hospital in 2012, focusing on cataract surgery. He graduated from Hanoi Medical University in 2006 and completed a fellowship in cataract surgery at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, he worked at Dong Nai Eye Hospital, performing over 300 cataract surgeries. With 14 years of experience, Dr. Sang has pioneered phacoemulsification techniques and received the "Cataract Surgery Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Thị Thanh: Chuyên gia tăng nhãn áp
+(38, 'Dr. Le Thi Thanh', '0912345038', '5 Pham Ngoc Thach, Thu Dau Mot', 'le.thanh@hospital.com', 8, 'lethanh8', 'password123', 'Eye care specialist.', 'https://thumbs.dreamstime.com/b/confident-young-adult-indian-female-doctor-gp-wear-white-coat-stethoscope-looking-camera-standing-arms-crossed-medical-191740547.jpg', 98.00, 'Dr. Le Thi Thanh joined our hospital in 2011, specializing in glaucoma management. She graduated from Hue University of Medicine and Pharmacy in 2005 and completed her residency at Da Nang Hospital from 2005 to 2008. From 2008 to 2011, she worked at Binh Duong General Hospital, managing glaucoma clinics. With 15 years of experience, Dr. Thanh has developed glaucoma treatment protocols and received the "Glaucoma Specialist Award" in 2019.', 'ACTIVE'),
+-- Bác sĩ Phạm Văn Toàn: Chuyên gia rối loạn võng mạc
+(39, 'Dr. Pham Van Toan', '0912345039', '123 Le Loi, My Tho', 'pham.toan@hospital.com', 8, 'phamtoan8', 'password123', 'Ophthalmology specialist.', 'https://www.massgeneral.org/assets/MGH/images/_global/homepage/curry-william-600x538-v5.png', 101.00, 'Dr. Pham Van Toan joined our hospital in 2013, focusing on retinal disorders. He graduated from Can Tho University of Medicine and Pharmacy in 2007 and completed a fellowship in retinal surgery at Ho Chi Minh City Eye Hospital from 2010 to 2012. From 2012 to 2013, he worked at My Tho General Hospital, managing retinal cases. With 13 years of experience, Dr. Toan is skilled in retinal laser therapy and received the "Retinal Specialist Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Thị Uyên: Chuyên gia chỉnh thị lực
+(40, 'Dr. Hoang Thi Uyen', '0912345040', '46 Le Loi, Rach Gia', 'hoang.uyen@hospital.com', 8, 'hoanguyen8', 'password123', 'Eye expert.', 'https://media.istockphoto.com/id/1270790502/photo/medical-concept-of-indian-beautiful-female-doctor-with-note-book.jpg?s=612x612&w=0&k=20&c=5r5tCLSnYHKiPNaHn4hu-e4u_-3eat_8PRdmEQgkmVM=', 99.00, 'Dr. Hoang Thi Uyen joined our hospital in 2012, specializing in vision correction. She graduated from Hanoi Medical University in 2006 and completed a fellowship in refractive surgery at National University Hospital, Singapore, from 2009 to 2011. From 2011 to 2012, she worked at Kien Giang General Hospital, performing LASIK surgeries. With 14 years of experience, Dr. Uyen has developed vision correction protocols and received the "Vision Correction Award" in 2020.', 'ACTIVE'),
+-- Khoa Tai Mũi Họng (department_id: 9)
+-- Bác sĩ Nguyễn Văn Việt: Chuyên gia chăm sóc tai mũi họng
+(41, 'Dr. Nguyen Van Viet', '0912345041', '123 Giai Phong, Hanoi', 'nguyen.viet@hospital.com', 9, 'nguyenviet9', 'password123', 'ENT specialist.', 'https://i.ebayimg.com/images/g/KeYAAOSwHwpijL5y/s-l1200.jpg', 105.00, 'Dr. Nguyen Van Viet joined our hospital in 2010, specializing in ear, nose, and throat care. He graduated from Hanoi Medical University in 2004 and completed a fellowship in otolaryngology at National University Hospital, Singapore, from 2007 to 2009. From 2009 to 2010, he worked at Bach Mai Hospital, managing ENT clinics. With 16 years of experience, Dr. Viet is skilled in nasal endoscopy and received the "ENT Excellence Award" in 2018.', 'ACTIVE'),
+-- Bác sĩ Trần Thị Xuân: Chuyên gia rối loạn xoang
+(42, 'Dr. Tran Thi Xuan', '0912345042', '456 Nguyen Trai, HCMC', 'tran.xuan@hospital.com', 9, 'tranxuan9', 'password123', 'ENT expert.', 'https://www.shutterstock.com/image-photo/medical-concept-indian-beautiful-female-260nw-2145916369.jpg', 107.00, 'Dr. Tran Thi Xuan joined our hospital in 2012, focusing on sinus disorders. She graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2006 and completed a fellowship in rhinology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, she worked at 115 People’s Hospital, managing sinusitis cases. With 14 years of experience, Dr. Xuan has developed sinus surgery protocols and received the "Rhinology Specialist Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Văn Yên: Chuyên gia mất thính lực
+(43, 'Dr. Le Van Yen', '0912345043', '789 Hai Ba Trung, Da Nang', 'le.yen@hospital.com', 9, 'leyen9', 'password123', 'ENT specialist.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn=9GcRd1X7zTc1_UX31UTx0HURQtKp6iJz6w6BqRQ&s', 103.00, 'Dr. Le Van Yen joined our hospital in 2011, specializing in hearing loss. He graduated from Hue University of Medicine and Pharmacy in 2005 and completed his residency at Da Nang Hospital from 2005 to 2008. From 2008 to 2011, he worked at 108 Military Central Hospital, managing audiology clinics. With 15 years of experience, Dr. Yen is skilled in audiometry and received the "Hearing Loss Specialist Award" in 2019.', 'ACTIVE'),
+-- Bác sĩ Phạm Thị Ánh: Chuyên gia rối loạn họng
+(44, 'Dr. Pham Thi Anh', '0912345044', '101 Trang Thi, Hanoi', 'pham.anh@hospital.com', 9, 'phamanh9', 'password123', 'ENT care expert.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn=9GcRJCFFe1AaV_kS0DKl0et-wzv4U8Ea2tz5n8A&s', 106.00, 'Dr. Pham Thi Anh joined our hospital in 2013, focusing on throat disorders. She graduated from Hanoi Medical University in 2007 and completed a fellowship in laryngology at National University Hospital, Singapore, from 2010 to 2012. From 2012 to 2013, she worked at E Hospital, Hanoi, managing tonsillitis cases. With 13 years of experience, Dr. Anh has developed throat surgery protocols and received the "Laryngology Specialist Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Văn Bình: Chuyên gia nhiễm trùng tai
+(45, 'Dr. Hoang Van Binh', '0912345045', '315 Nguyen Van Cu, Can Tho', 'hoang.binh@hospital.com', 9, 'hoangbinh9', 'password123', 'ENT specialist.', 'https://media.istockphoto.com/id/537282044/photo/dont-hesitate-to-stop-by-without-buying-anything.jpg?s=612x612&w=0&k=20&c=i5oLsIrZ-OKaCVhj2EtBTiKCpK23rnf9OuC_azy-EIo=', 104.00, 'Dr. Hoang Van Binh joined our hospital in 2012, specializing in ear infections. He graduated from Can Tho University of Medicine and Pharmacy in 2006 and completed a fellowship in otology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, he worked at Can Tho General Hospital, managing ear infection cases. With 14 years of experience, Dr. Binh has developed ear treatment protocols and received the "Otology Specialist Award" in 2020.', 'ACTIVE'),
+-- Khoa Tiết niệu (department_id: 10)
+-- Bác sĩ Nguyễn Thị Cẩm: Chuyên gia sức khỏe tiết niệu
+(46, 'Dr. Nguyen Thi Cam', '0912345046', '16 Le Loi, Hue', 'nguyen.cam@hospital.com', 10, 'nguyencam10', 'password123', 'Urology expert.', 'https://encrypted-tbn0.gstatic.com/images?q=9GcR9v-hOKn3ssBfKMt3v7kR9jN1gO6iEjrtAVw&s', 110.00, 'Dr. Nguyen Thi Cam joined our hospital in 2010, specializing in urinary health. She graduated from Hue University of Medicine and Pharmacy in 2004 and completed a fellowship in urology at National University Hospital, Singapore, from 2007 to 2009. From 2009 to 2010, she worked at Hue Central Hospital, managing urology clinics. With 16 years of experience, Dr. Cam is skilled in cystoscopy and received the "Urology Excellence Award" in 2018.', 'ACTIVE'),
+-- Bác sĩ Trần Văn Dân: Chuyên gia sỏi thận
+(47, 'Dr. Tran Van Dan', '0912345047', '19 Yersin, Nha Trang', 'tran.dan@hospital.com', 10, 'trandan10', 'password123', 'Urologist.', 'https://5.imimg.com/data5/SELLER/Default/2023/6/316680763/CM/BC/UR/84298138/doctor-lab-coat-dress.png', 112.00, 'Dr. Tran Van Dan joined our hospital in 2012, focusing on kidney stones. He graduated from Ho Chi Minh City University of Medicine and Pharmacy in 2006 and completed a fellowship in urology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, he worked at Nha Trang General Hospital, performing laser lithotripsy. With 14 years of experience, Dr. Dan has developed kidney stone treatment protocols and received the "Kidney Stone Specialist Award" in 2020.', 'ACTIVE'),
+-- Bác sĩ Lê Thị Em: Chuyên gia rối loạn tuyến tiền liệt
+(48, 'Dr. Le Thi Em', '0912345048', '123 Le Loi, Vung Tau', 'le.em@hospital.com', 10, 'leem10', 'password123', 'Urinary specialist.', 'https://encrypted-tbn0.gstatic.com/images?q=9GcRq1X7zTc1_UX31UTx0HURQtKp6iJz6w6BqRQ&s', 108.00, 'Dr. Le Thi Em joined our hospital in 2011, specializing in prostate disorders. She graduated from Hanoi Medical University in 2005 and completed her residency at Viet Duc Hospital from 2005 to 2008. From 2008 to 2011, she worked at Vung Tau General Hospital, managing prostate clinics. With 15 years of experience, Dr. Em is skilled in TURP procedures and received the "Prostate Specialist Award" in 2019.', 'ACTIVE'),
+-- Bác sĩ Phạm Văn Phú: Chuyên gia rối loạn bàng quang
+(49, 'Dr. Pham Van Fu', '0912345049', 'Ha Long, Quang Ninh', 'pham.fu@hospital.com', 10, 'phamfu10', 'password123', 'Urology specialist.', 'https://media.istockphoto.com/id/668598078/photo/cheerful-doctor-posing.jpg?s=612x612&w=0&k=20&c=Vbhk7jNeRYtTbhgTPwTn08Evw_hl_w18OUOaGKaa-0Y=', 111.00, 'Dr. Pham Van Fu joined our hospital in 2013, focusing on bladder disorders. He graduated from Hue University of Medicine and Pharmacy in 2007 and completed a fellowship in urology at National University Hospital, Singapore, from 2010 to 2012. From 2012 to 2013, he worked at Quang Ninh General Hospital, managing bladder dysfunction cases. With 13 years of experience, Dr. Fu has developed bladder treatment protocols and received the "Bladder Specialist Award" in 2021.', 'ACTIVE'),
+-- Bác sĩ Hoàng Thị Giang: Chuyên gia nhiễm trùng đường tiết niệu
+(50, 'Dr. Hoang Thi Giang', '0912345050', '479 Luong Ngoc Quyen, Thai Nguyen', 'hoang.giang@hospital.com', 10, 'hoanggiang10', 'password123', 'Urologist.', 'https://png.pngtree.com/thumb_back/fh260/background/20220401/pngtree-indian-beautifulfemale-doctor-job-lady-female-photo-image_2060393.jpg', 109.00, 'Dr. Hoang Thi Giang joined our hospital in 2012, specializing in urinary tract infections. She graduated from Hanoi Medical University in 2006 and completed a fellowship in urology at Cho Ray Hospital from 2009 to 2011. From 2011 to 2012, she worked at Thai Nguyen General Hospital, managing UTI clinics. With 14 years of experience, Dr. Giang has developed UTI treatment protocols and received the "UTI Specialist Award" in 2020.', 'ACTIVE');
+
+
+-- Thêm dữ liệu cho 20 bệnh nhân vào bảng patients với một câu lệnh INSERT INTO duy nhất
+INSERT INTO patients (patient_id, patient_name, patient_dob, patient_email, patient_phone, patient_address, patient_password, patient_username, patient_gender, patient_code, patient_img) VALUES
+-- Bệnh nhân 1: Nguyễn Minh Tuấn, nam, Hà Nội
+(1, 'Nguyen Minh Tuan', '1983-01-12 00:00:00', 'nguyen.tuan@patient.com', '0987654001', '234 Hoang Quoc Viet, Hanoi', 'password123', 'nguyen.tuan@patient.com', 'MALE', 'PAT101', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoZWUp9HB5cRvh1HKkeQu6vsrUiuXw8zNYkQ&s'),
+-- Bệnh nhân 2: Trần Thị Lan Anh, nữ, TP. Hồ Chí Minh
+(2, 'Tran Thi Lan Anh', '1992-05-28 00:00:00', 'tran.lananh@patient.com', '0987654002', '567 Nguyen Dinh Chieu, HCMC', 'password123', 'tran.lananh@patient.com', 'FEMALE', 'PAT102', 'https://hoangnguyen.edu.vn/uploads/blog/2025/01/08/42d9feb7c7912f55b6eff8b6b0f84a7f33615909-1736281930.webp'),
+-- Bệnh nhân 3: Lê Quang Vinh, nam, Đà Nẵng
+(3, 'Le Quang Vinh', '1975-10-03 00:00:00', 'le.vinh@patient.com', '0987654003', '890 Tran Cao Van, Da Nang', 'password123', 'le.vinh@patient.com', 'MALE', 'PAT103', 'https://kenh14cdn.com/2019/5/6/e4-1556804137280996840619-15571599881272003882952.jpg'),
+-- Bệnh nhân 4: Phạm Thị Hồng Nhung, nữ, Hải Phòng
+(4, 'Pham Thi Hong Nhung', '1994-03-17 00:00:00', 'pham.nhung@patient.com', '0987654004', '112 Lach Tray, Hai Phong', 'password123', 'pham.nhung@patient.com', 'FEMALE', 'PAT104', 'https://anhnail.com/wp-content/uploads/2024/11/Hinh-gai-xinh-2009-toc-dai-cute.jpg'),
+-- Bệnh nhân 5: Hoàng Văn Đức, nam, Cần Thơ
+(5, 'Hoang Van Duc', '1980-08-09 00:00:00', 'hoang.duc@patient.com', '0987654005', '345 Chau Van Liem, Can Tho', 'password123', 'hoang.duc@patient.com', 'MALE', 'PAT105', 'https://minhducpc.vn/uploads/images/hinh-nen-trai-han-quoc31.jpg'),
+-- Bệnh nhân 6: Nguyễn Thị Mai Linh, nữ, Huế
+(6, 'Nguyen Thi Mai Linh', '1989-11-30 00:00:00', 'nguyen.linh@patient.com', '0987654006', '78 Nguyen Hue, Hue', 'password123', 'nguyen.linh@patient.com', 'FEMALE', 'PAT106', 'https://chamsua.vn/wp-content/uploads/2024/12/300anh-gai-xinh-toc-ngang-vai-2k2-2k3-2k4-2k6-2k7-2k9-tuyen-48-1.jpg'),
+-- Bệnh nhân 7: Trần Văn Hùng, nam, Nha Trang
+(7, 'Tran Van Hung', '1974-04-25 00:00:00', 'tran.hung@patient.com', '0987654007', '90 Yersin, Nha Trang', 'password123', 'tran.hung@patient.com', 'MALE', 'PAT107', 'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-trai-dep-Viet-Nam-70.jpg'),
+-- Bệnh nhân 8: Lê Thị Ngọc Ánh, nữ, Vũng Tàu
+(8, 'Le Thi Ngoc Anh', '1996-02-08 00:00:00', 'le.anh@patient.com', '0987654008', '234 Truong Cong Dinh, Vung Tau', 'password123', 'le.anh@patient.com', 'FEMALE', 'PAT108', 'https://maunaildep.com/wp-content/uploads/2025/04/gai-xinh-2k11-1.jpg'),
+-- Bệnh nhân 9: Phạm Văn Thành, nam, Quảng Ninh
+(9, 'Pham Van Thanh', '1981-07-14 00:00:00', 'pham.thanh@patient.com', '0987654009', '567 Ha Long, Quang Ninh', 'password123', 'pham.thanh@patient.com', 'MALE', 'PAT109', 'https://img.vuahanghieu.com/unsafe/0x0/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/news/content/2024/07/cach-dep-trai-nhu-han-quoc-5-jpg-1720672614-11072024113654.jpg'),
+-- Bệnh nhân 10: Hoàng Thị Thu Hà, nữ, Thái Nguyên
+(10, 'Hoang Thi Thu Ha', '1998-06-22 00:00:00', 'hoang.ha@patient.com', '0987654010', '890 Luong Ngoc Quyen, Thai Nguyen', 'password123', 'hoang.ha@patient.com', 'FEMALE', 'PAT110', 'https://i.pinimg.com/736x/87/63/1f/87631fc7ae2f77de122e268b64b3baf3.jpg'),
+-- Bệnh nhân 11: Nguyễn Văn Long, nam, Bắc Ninh
+(11, 'Nguyen Van Long', '1987-09-19 00:00:00', 'nguyen.long@patient.com', '0987654011', '123 Nguyen Trai, Bac Ninh', 'password123', 'nguyen.long@patient.com', 'MALE', 'PAT111', 'https://cdn2.tuoitre.vn/471584752817336320/2024/9/30/v-btsjpeg-1727681620463942624734.jpg'),
+-- Bệnh nhân 12: Trần Thị Kim Oanh, nữ, Vinh
+(12, 'Tran Thi Kim Oanh', '1991-12-05 00:00:00', 'tran.oanh@patient.com', '0987654012', '456 Tran Phu, Vinh', 'password123', 'tran.oanh@patient.com', 'FEMALE', 'PAT112', 'https://gockienthuc.edu.vn/wp-content/uploads/2024/07/999-anh-gai-xinh-viet-nam-hot-girl-cute-de-thuong-dep-xiu-ngang_6690eae21a8d3.webp'),
+-- Bệnh nhân 13: Lê Văn Phúc, nam, Phú Quốc
+(13, 'Le Van Phuc', '1979-03-01 00:00:00', 'le.phuc@patient.com', '0987654013', '789 Duong Dong, Phu Quoc', 'password123', 'le.phuc@patient.com', 'MALE', 'PAT113', 'https://kenh14cdn.com/2020/6/30/70a5a48dfd72002c5963-1593507900533444752792.jpg'),
+-- Bệnh nhân 14: Phạm Thị Minh Thư, nữ, Đà Lạt
+(14, 'Pham Thi Minh Thu', '1993-10-27 00:00:00', 'pham.thu@patient.com', '0987654014', '101 Pham Ngoc Thach, Da Lat', 'password123', 'pham.thu@patient.com', 'FEMALE', 'PAT114', 'https://top10tphcm.com/wp-content/uploads/2024/04/hinh-anh-gai-xinh-cuoi-dep-14.jpg'),
+-- Bệnh nhân 15: Hoàng Văn Nam, nam, Buôn Ma Thuột
+(15, 'Hoang Van Nam', '1984-05-13 00:00:00', 'hoang.nam@patient.com', '0987654015', '234 Nguyen Tat Thanh, Buon Ma Thuot', 'password123', 'hoang.nam@patient.com', 'MALE', 'PAT115', 'https://i.pinimg.com/originals/0a/e7/6f/0ae76f3362e2c1341f56a403b9c2d31f.jpg?nii=t'),
+-- Bệnh nhân 16: Nguyễn Thị Hương, nữ, Long An
+(16, 'Nguyen Thi Huong', '1988-08-16 00:00:00', 'nguyen.huong@patient.com', '0987654016', '567 Nguyen Thong, Long An', 'password123', 'nguyen.huong@patient.com', 'FEMALE', 'PAT116', 'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-15-1.jpg'),
+-- Bệnh nhân 17: Trần Văn Khoa, nam, Biên Hòa
+(17, 'Tran Van Khoa', '1977-01-29 00:00:00', 'tran.khoa@patient.com', '0987654017', '890 Dong Khoi, Bien Hoa', 'password123', 'tran.khoa@patient.com', 'MALE', 'PAT117', 'https://bsphungmanhcuong.com/wp-content/uploads/2021/02/cach-de-dep-trai-2.jpg'),
+-- Bệnh nhân 18: Lê Thị Hồng Ngọc, nữ, Thủ Dầu Một
+(18, 'Le Thi Hong Ngoc', '1995-04-11 00:00:00', 'le.ngoc@patient.com', '0987654018', '123 Pham Ngoc Thach, Thu Dau Mot', 'password123', 'le.ngoc@patient.com', 'FEMALE', 'PAT118', 'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-con-gai-1-1.jpg'),
+-- Bệnh nhân 19: Phạm Văn Quang, nam, Mỹ Tho
+(19, 'Pham Van Quang', '1982-11-23 00:00:00', 'pham.quang@patient.com', '0987654019', '456 Le Loi, My Tho', 'password123', 'pham.quang@patient.com', 'MALE', 'PAT119', 'https://danviet.ex-cdn.com/files/f1/296231569849192448/2022/7/29/ji-chang-wook-1659080761353170895095.jpg'),
+-- Bệnh nhân 20: Hoàng Thị Thanh Tâm, nữ, Rạch Giá
+(20, 'Hoang Thi Thanh Tam', '1990-07-07 00:00:00', 'hoang.tam@patient.com', '0987654020', '789 Le Loi, Rach Gia', 'password123', 'hoang.tam@patient.com', 'FEMALE', 'PAT120', 'https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/483336nGo/anh-mo-ta.png');
+
+
+INSERT INTO staffs (staff_id, staff_name, staff_phone, staff_address, staff_type, staff_status, staff_username, staff_password, staff_email) VALUES
+-- Nhân viên 1: Nguyễn Thị Minh Châu, lễ tân, Hà Nội
+(1, 'Nguyen Thi Minh Chau', '0908765001', '234 Hoang Quoc Viet, Hanoi', 'RECEPTIONIST', 'ACTIVE', 'nguyenchaud_rec1', 'password123', 'nguyen.chau@hospital.com'),
+-- Nhân viên 2: Trần Văn Quốc Bảo, y tá, TP. Hồ Chí Minh
+(2, 'Tran Van Quoc Bao', '0908765002', '567 Nguyen Dinh Chieu, HCMC', 'NURSE', 'ACTIVE', 'tranbao_nur2', 'password123', 'tran.bao@hospital.com'),
+-- Nhân viên 3: Lê Thị Hồng Ngọc, lễ tân, Đà Nẵng
+(3, 'Le Thi Hong Ngoc', '0908765003', '890 Tran Cao Van, Da Nang', 'RECEPTIONIST', 'ACTIVE', 'lengoc_rec3', 'password123', 'le.ngoc@hospital.com'),
+-- Nhân viên 4: Phạm Văn Thanh Tùng, y tá, Hải Phòng
+(4, 'Pham Van Thanh Tung', '0908765004', '112 Lach Tray, Hai Phong', 'NURSE', 'ACTIVE', 'phamtung_nur4', 'password123', 'pham.tung@hospital.com'),
+-- Nhân viên 5: Hoàng Thị Lan Anh, lễ tân, Cần Thơ
+(5, 'Hoang Thi Lan Anh', '0908765005', '345 Chau Van Liem, Can Tho', 'RECEPTIONIST', 'ACTIVE', 'hoanganh_rec5', 'password123', 'hoang.anh@hospital.com'),
+-- Nhân viên 6: Nguyễn Văn Gia Huy, y tá, Huế
+(6, 'Nguyen Van Gia Huy', '0908765006', '78 Nguyen Hue, Hue', 'NURSE', 'ACTIVE', 'nguyenhuy_nur6', 'password123', 'nguyen.huy@hospital.com'),
+-- Nhân viên 7: Trần Thị Thu Hà, lễ tân, Nha Trang
+(7, 'Tran Thi Thu Ha', '0908765007', '90 Yersin, Nha Trang', 'RECEPTIONIST', 'ACTIVE', 'tranha_rec7', 'password123', 'tran.ha@hospital.com'),
+-- Nhân viên 8: Lê Văn Minh Đức, y tá, Vũng Tàu
+(8, 'Le Van Minh Duc', '0908765008', '234 Truong Cong Dinh, Vung Tau', 'NURSE', 'ACTIVE', 'leduc_nur8', 'password123', 'le.duc@hospital.com'),
+-- Nhân viên 9: Phạm Thị Mai Linh, lễ tân, Quảng Ninh
+(9, 'Pham Thi Mai Linh', '0908765009', '567 Ha Long, Quang Ninh', 'RECEPTIONIST', 'ACTIVE', 'phamlinh_rec9', 'password123', 'pham.linh@hospital.com'),
+-- Nhân viên 10: Hoàng Văn Quang Vinh, y tá, Thái Nguyên
+(10, 'Hoang Van Quang Vinh', '0908765010', '890 Luong Ngoc Quyen, Thai Nguyen', 'NURSE', 'ACTIVE', 'hoangvinh_nur10', 'password123', 'hoang.vinh@hospital.com');
+
+-- Thêm dữ liệu cho 60 lịch hẹn vào bảng appointments với một câu lệnh INSERT INTO duy nhất
+
+INSERT INTO appointments (appointment_id, patient_id, doctor_id, appointment_date, medical_day, slot, status, payment_name, price, staff_id) VALUES
+-- June 2025: 30 appointments
+-- Doctor ID 51: 15 appointments
+(1, 1, 51, '2025-06-01', '2025-06-01', 1, 'COMPLETED', 'CREDIT_CARD', 100.00, 1),
+(2, 2, 51, '2025-06-01', '2025-06-01', 2, 'COMPLETED', 'CASH', 120.00, 3),
+(3, 3, 51, '2025-06-02', '2025-06-02', 3, 'COMPLETED', 'CREDIT_CARD', 110.00, 5),
+(4, 4, 51, '2025-06-02', '2025-06-02', 4, 'COMPLETED', 'CASH', 90.00, 7),
+(5, 5, 51, '2025-06-03', '2025-06-03', 5, 'COMPLETED', 'CREDIT_CARD', 130.00, 9),
+(6, 6, 51, '2025-06-03', '2025-06-03', 6, 'COMPLETED', 'CASH', 95.00, 1),
+(7, 7, 51, '2025-06-04', '2025-06-04', 7, 'COMPLETED', 'CREDIT_CARD', 115.00, 3),
+(8, 8, 51, '2025-06-04', '2025-06-04', 8, 'COMPLETED', 'CASH', 100.00, 5),
+(9, 9, 51, '2025-06-05', '2025-06-05', 1, 'COMPLETED', 'CREDIT_CARD', 105.00, 7),
+(10, 10, 51, '2025-06-05', '2025-06-05', 2, 'COMPLETED', 'CASH', 110.00, 9),
+(11, 11, 51, '2025-06-06', '2025-06-06', 3, 'COMPLETED', 'CREDIT_CARD', 100.00, 1),
+(12, 12, 51, '2025-06-06', '2025-06-06', 4, 'COMPLETED', 'CASH', 120.00, 3),
+(13, 13, 51, '2025-06-07', '2025-06-07', 5, 'COMPLETED', 'CREDIT_CARD', 110.00, 5),
+(14, 14, 51, '2025-06-07', '2025-06-07', 6, 'MISSED', 'CASH', 90.00, 7),
+(15, 15, 51, '2025-06-08', '2025-06-08', 7, 'MISSED', 'CREDIT_CARD', 130.00, 9),
+-- Doctor ID 1: 5 appointments
+(16, 16, 1, '2025-06-09', '2025-06-09', 1, 'COMPLETED', 'CREDIT_CARD', 100.00, 1),
+(17, 17, 1, '2025-06-09', '2025-06-09', 2, 'COMPLETED', 'CASH', 105.00, 3),
+(18, 18, 1, '2025-06-10', '2025-06-10', 3, 'COMPLETED', 'CREDIT_CARD', 110.00, 5),
+(19, 19, 1, '2025-06-10', '2025-06-10', 4, 'COMPLETED', 'CASH', 100.00, 7),
+(20, 20, 1, '2025-06-11', '2025-06-11', 5, 'MISSED', 'CREDIT_CARD', 105.00, 9),
+-- Doctor ID 3: 10 appointments
+(21, 1, 3, '2025-06-12', '2025-06-12', 1, 'COMPLETED', 'CREDIT_CARD', 102.00, 1),
+(22, 2, 3, '2025-06-12', '2025-06-12', 2, 'COMPLETED', 'CASH', 118.00, 3),
+(23, 3, 3, '2025-06-13', '2025-06-13', 3, 'COMPLETED', 'CREDIT_CARD', 108.00, 5),
+(24, 4, 3, '2025-06-13', '2025-06-13', 4, 'COMPLETED', 'CASH', 88.00, 7),
+(25, 5, 3, '2025-06-14', '2025-06-14', 5, 'COMPLETED', 'CREDIT_CARD', 128.00, 9),
+(26, 6, 3, '2025-06-14', '2025-06-14', 6, 'COMPLETED', 'CASH', 93.00, 1),
+(27, 7, 3, '2025-06-15', '2025-06-15', 7, 'COMPLETED', 'CREDIT_CARD', 113.00, 3),
+(28, 8, 3, '2025-06-15', '2025-06-15', 8, 'COMPLETED', 'CASH', 98.00, 5),
+(29, 9, 3, '2025-06-16', '2025-06-16', 1, 'MISSED', 'CREDIT_CARD', 103.00, 7),
+(30, 10, 3, '2025-06-16', '2025-06-16', 2, 'MISSED', 'CASH', 108.00, 9),
+-- July 2025: Original 60 appointments
+-- July 18, 2025: 17 COMPLETED, 3 MISSED
+(31, 1, 1, '2025-07-20', '2025-07-20', 1, 'COMPLETED', 'CREDIT_CARD', 100.00, 1),
+(32, 2, 6, '2025-07-20', '2025-07-20', 2, 'COMPLETED', 'CASH', 120.00, 3),
+(33, 3, 11, '2025-07-20', '2025-07-20', 3, 'COMPLETED', 'CREDIT_CARD', 110.00, 5),
+(34, 4, 16, '2025-07-20', '2025-07-20', 4, 'COMPLETED', 'CASH', 90.00, 7),
+(35, 5, 21, '2025-07-20', '2025-07-20', 5, 'COMPLETED', 'CREDIT_CARD', 130.00, 9),
+(36, 6, 26, '2025-07-20', '2025-07-20', 6, 'COMPLETED', 'CASH', 95.00, 1),
+(37, 7, 31, '2025-07-20', '2025-07-20', 7, 'COMPLETED', 'CREDIT_CARD', 115.00, 3),
+(38, 8, 36, '2025-07-20', '2025-07-20', 8, 'COMPLETED', 'CASH', 100.00, 5),
+(39, 9, 41, '2025-07-20', '2025-07-20', 1, 'COMPLETED', 'CREDIT_CARD', 105.00, 7),
+(40, 10, 46, '2025-07-20', '2025-07-20', 2, 'COMPLETED', 'CASH', 110.00, 9),
+(41, 11, 2, '2025-07-20', '2025-07-20', 3, 'COMPLETED', 'CREDIT_CARD', 105.00, 1),
+(42, 12, 7, '2025-07-20', '2025-07-20', 4, 'COMPLETED', 'CASH', 122.00, 3),
+(43, 13, 12, '2025-07-20', '2025-07-20', 5, 'COMPLETED', 'CREDIT_CARD', 112.00, 5),
+(44, 14, 17, '2025-07-20', '2025-07-20', 6, 'COMPLETED', 'CASH', 92.00, 7),
+(45, 15, 22, '2025-07-20', '2025-07-20', 7, 'COMPLETED', 'CREDIT_CARD', 132.00, 9),
+(46, 16, 27, '2025-07-20', '2025-07-20', 8, 'COMPLETED', 'CASH', 97.00, 1),
+(47, 17, 32, '2025-07-20', '2025-07-20', 1, 'COMPLETED', 'CREDIT_CARD', 117.00, 3),
+(48, 18, 37, '2025-07-20', '2025-07-20', 2, 'MISSED', 'CASH', 102.00, 5),
+(49, 19, 42, '2025-07-20', '2025-07-20', 3, 'MISSED', 'CREDIT_CARD', 107.00, 7),
+(50, 20, 47, '2025-07-20', '2025-07-20', 4, 'MISSED', 'CASH', 112.00, 9),
+-- July 19, 2025: 20 appointments (19 PENDING, 1 MISSED)
+(51, 1, 3, '2025-07-20', '2025-07-20', 1, 'MISSED', 'CREDIT_CARD', 102.00, 1),
+(52, 2, 8, '2025-07-20', '2025-07-20', 2, 'PENDING', 'CASH', 118.00, 3),
+(53, 3, 13, '2025-07-20', '2025-07-20', 3, 'PENDING', 'CREDIT_CARD', 108.00, 5),
+(54, 4, 18, '2025-07-20', '2025-07-20', 4, 'PENDING', 'CASH', 88.00, 7),
+(55, 5, 23, '2025-07-20', '2025-07-20', 5, 'PENDING', 'CREDIT_CARD', 128.00, 9),
+(56, 6, 28, '2025-07-20', '2025-07-20', 6, 'PENDING', 'CASH', 93.00, 1),
+(57, 7, 33, '2025-07-20', '2025-07-20', 7, 'PENDING', 'CREDIT_CARD', 113.00, 3),
+(58, 8, 38, '2025-07-20', '2025-07-20', 8, 'PENDING', 'CASH', 98.00, 5),
+(59, 9, 43, '2025-07-20', '2025-07-20', 1, 'PENDING', 'CREDIT_CARD', 103.00, 7),
+(60, 10, 48, '2025-07-20', '2025-07-20', 2, 'PENDING', 'CASH', 108.00, 9),
+(61, 11, 4, '2025-07-20', '2025-07-20', 3, 'PENDING', 'CREDIT_CARD', 98.00, 1),
+(62, 12, 9, '2025-07-20', '2025-07-20', 4, 'PENDING', 'CASH', 121.00, 3),
+(63, 13, 14, '2025-07-20', '2025-07-20', 5, 'PENDING', 'CREDIT_CARD', 111.00, 5),
+(64, 14, 19, '2025-07-20', '2025-07-20', 6, 'PENDING', 'CASH', 91.00, 7),
+(65, 15, 24, '2025-07-20', '2025-07-20', 7, 'PENDING', 'CREDIT_CARD', 131.00, 9),
+(66, 16, 29, '2025-07-20', '2025-07-20', 8, 'PENDING', 'CASH', 96.00, 1),
+(67, 17, 34, '2025-07-20', '2025-07-20', 1, 'PENDING', 'CREDIT_CARD', 116.00, 3),
+(68, 18, 39, '2025-07-20', '2025-07-20', 2, 'PENDING', 'CASH', 101.00, 5),
+(69, 19, 44, '2025-07-20', '2025-07-20', 3, 'PENDING', 'CREDIT_CARD', 106.00, 7),
+(70, 20, 49, '2025-07-20', '2025-07-20', 4, 'PENDING', 'CASH', 111.00, 9),
+-- July 20, 2025: 20 appointments PENDING
+(71, 1, 5, '2025-07-20', '2025-07-21', 1, 'PENDING', 'CREDIT_CARD', 103.00, 1),
+(72, 2, 10, '2025-07-20', '2025-07-21', 2, 'PENDING', 'CASH', 119.00, 3),
+(73, 3, 15, '2025-07-20', '2025-07-21', 3, 'PENDING', 'CREDIT_CARD', 109.00, 5),
+(74, 4, 20, '2025-07-20', '2025-07-21', 4, 'PENDING', 'CASH', 89.00, 7),
+(75, 5, 25, '2025-07-20', '2025-07-21', 5, 'PENDING', 'CREDIT_CARD', 129.00, 9),
+(76, 6, 30, '2025-07-20', '2025-07-21', 6, 'PENDING', 'CASH', 94.00, 1),
+(77, 7, 35, '2025-07-20', '2025-07-21', 7, 'PENDING', 'CREDIT_CARD', 114.00, 3),
+(78, 8, 40, '2025-07-20', '2025-07-21', 8, 'PENDING', 'CASH', 99.00, 5),
+(79, 9, 45, '2025-07-20', '2025-07-21', 1, 'PENDING', 'CREDIT_CARD', 104.00, 7),
+(80, 10, 50, '2025-07-20', '2025-07-21', 2, 'PENDING', 'CASH', 109.00, 9),
+(81, 11, 51, '2025-07-20', '2025-07-21', 3, 'PENDING', 'CREDIT_CARD', 100.00, 1),
+(82, 12, 6, '2025-07-20', '2025-07-21', 4, 'PENDING', 'CASH', 120.00, 3),
+(83, 13, 11, '2025-07-20', '2025-07-21', 5, 'PENDING', 'CREDIT_CARD', 110.00, 5),
+(84, 14, 16, '2025-07-20', '2025-07-21', 6, 'PENDING', 'CASH', 90.00, 7),
+(85, 15, 21, '2025-07-20', '2025-07-21', 7, 'PENDING', 'CREDIT_CARD', 130.00, 9),
+(86, 16, 26, '2025-07-20', '2025-07-21', 8, 'PENDING', 'CASH', 95.00, 1),
+(87, 17, 31, '2025-07-20', '2025-07-21', 1, 'PENDING', 'CREDIT_CARD', 115.00, 3),
+(88, 18, 36, '2025-07-20', '2025-07-21', 2, 'PENDING', 'CASH', 100.00, 5),
+(89, 19, 41, '2025-07-20', '2025-07-21', 3, 'PENDING', 'CREDIT_CARD', 105.00, 7),
+(90, 20, 46, '2025-07-20', '2025-07-21', 4, 'PENDING', 'CASH', 110.00, 9);
+
+
+
+INSERT INTO medicalrecords (patient_id, symptoms, diagnosis, treatment, prescription, follow_up_date, doctor_id, severity, image) VALUES
+-- Bệnh nhân 1: Nguyen Minh Tuan, Khoa Tim mạch, Chẩn đoán: Đau thắt ngực (Angina)
+(1, 'Chest pain, shortness of breath', 'Angina', 'Rest, vasodilator medication', 'Nitroglycerin', '2025-07-19', 1, 5.5, '/images/record1.jpg'), -- Dr. Nguyen Van An
+-- Bệnh nhân 1: Nguyen Minh Tuan, Khoa Tim mạch, Chẩn đoán: Rối loạn nhịp tim (Arrhythmia)
+(1, 'Fatigue, palpitations', 'Arrhythmia', 'Anti-arrhythmic medication', 'Amiodarone', '2025-07-25', 2, 5.0, '/images/record2.jpg'), -- Dr. Tran Thi Bich
+-- Bệnh nhân 1: Nguyen Minh Tuan, Khoa Tim mạch, Chẩn đoán: Suy tim (Heart Failure)
+(1, 'Swelling in legs', 'Heart Failure', 'Diuretics, lifestyle changes', 'Furosemide', '2025-08-01', 3, 6.0, '/images/record3.jpg'), -- Dr. Le Van Cuong
+-- Bệnh nhân 2: Tran Thi Lan Anh, Khoa Thần kinh, Chẩn đoán: Đau nửa đầu (Migraine)
+(2, 'Severe headache, nausea', 'Migraine', 'Pain relief, rest', 'Sumatriptan', '2025-07-20', 6, 6.5, '/images/record4.jpg'), -- Dr. Nguyen Thi Phuong
+-- Bệnh nhân 2: Tran Thi Lan Anh, Khoa Thần kinh, Chẩn đoán: Rối loạn tiền đình (Vestibular Disorder)
+(2, 'Dizziness, vertigo', 'Vestibular Disorder', 'Circulation-enhancing medication', 'Betahistine', '2025-07-26', 7, 4.5, '/images/record5.jpg'), -- Dr. Tran Van Giang
+-- Bệnh nhân 2: Tran Thi Lan Anh, Khoa Thần kinh, Chẩn đoán: Bệnh Parkinson (Parkinson’s Disease)
+(2, 'Tremors, stiffness', 'Parkinson’s Disease', 'Dopamine agonists', 'Levodopa', '2025-08-02', 8, 6.0, '/images/record6.jpg'), -- Dr. Le Thi Hoa
+-- Bệnh nhân 3: Le Quang Vinh, Khoa Chấn thương chỉnh hình, Chẩn đoán: Thoát vị đĩa đệm (Herniated Disc)
+(3, 'Lower back pain, numbness', 'Herniated Disc', 'Physical therapy, pain relief', 'Ibuprofen', '2025-07-21', 11, 5.5, '/images/record7.jpg'), -- Dr. Nguyen Van Khanh
+-- Bệnh nhân 3: Le Quang Vinh, Khoa Chấn thương chỉnh hình, Chẩn đoán: Viêm xương khớp (Osteoarthritis)
+(3, 'Knee pain, swelling', 'Osteoarthritis', 'Joint injections, exercise', 'Hyaluronic Acid', '2025-07-27', 12, 5.0, '/images/record8.jpg'), -- Dr. Tran Thi Lan
+-- Bệnh nhân 3: Le Quang Vinh, Khoa Chấn thương chỉnh hình, Chẩn đoán: Bong gân mắt cá chân (Ankle Sprain)
+(3, 'Ankle pain, swelling', 'Ankle Sprain', 'Bandaging, rest', 'Ibuprofen', '2025-08-03', 13, 4.5, '/images/record9.jpg'), -- Dr. Le Van Minh
+-- Bệnh nhân 4: Pham Thi Hong Nhung, Khoa Nhi, Chẩn đoán: Viêm phế quản (Bronchitis)
+(4, 'Fever, persistent cough', 'Bronchitis', 'Antibiotics, cough suppressant', 'Azithromycin', '2025-07-22', 16, 4.5, '/images/record10.jpg'), -- Dr. Nguyen Thi Quy
+-- Bệnh nhân 4: Pham Thi Hong Nhung, Khoa Nhi, Chẩn đoán: Dị ứng (Allergic Reaction)
+(4, 'Rash, itching', 'Allergic Reaction', 'Antihistamines', 'Cetirizine', '2025-07-28', 20, 3.5, '/images/record11.jpg'), -- Dr. Hoang Thi Vinh
+-- Bệnh nhân 4: Pham Thi Hong Nhung, Khoa Nhi, Chẩn đoán: Viêm amidan (Tonsillitis)
+(4, 'Fever, sore throat', 'Tonsillitis', 'Antibiotics, rest', 'Amoxicillin', '2025-08-04', 18, 5.0, '/images/record12.jpg'), -- Dr. Le Thi Tuyet
+-- Bệnh nhân 5: Hoang Van Duc, Khoa Ung bướu, Chẩn đoán: Ung thư phổi (Lung Cancer)
+(5, 'Chest pain, shortness of breath', 'Lung Cancer', 'Chemotherapy, palliative care', 'Cisplatin', '2025-07-23', 25, 7.5, '/images/record13.jpg'), -- Dr. Hoang Van Canh
+-- Bệnh nhân 5: Hoang Van Duc, Khoa Ung bướu, Chẩn đoán: U lympho (Lymphoma)
+(5, 'Swollen lymph nodes', 'Lymphoma', 'Chemotherapy, radiation', 'Cyclophosphamide', '2025-07-29', 22, 7.0, '/images/record14.jpg'), -- Dr. Tran Thi Yen
+-- Bệnh nhân 5: Hoang Van Duc, Khoa Ung bướu, Chẩn đoán: Ung thư di căn (Metastatic Cancer)
+(5, 'Fatigue, weight loss', 'Metastatic Cancer', 'Targeted therapy', 'Erlotinib', '2025-08-05', 23, 8.0, '/images/record15.jpg'), -- Dr. Le Van Anh
+-- Bệnh nhân 6: Nguyen Thi Mai Linh, Khoa Da liễu, Chẩn đoán: Mụn trứng cá nặng (Severe Acne)
+(6, 'Red inflamed acne', 'Severe Acne', 'Topical and oral medication', 'Isotretinoin', '2025-07-24', 26, 3.5, '/images/record16.jpg'), -- Dr. Nguyen Thi Dieu
+-- Bệnh nhân 6: Nguyen Thi Mai Linh, Khoa Da liễu, Chẩn đoán: Chàm mãn tính (Chronic Eczema)
+(6, 'Dry, flaky skin', 'Chronic Eczema', 'Moisturizing cream', 'Eucerin', '2025-07-30', 28, 3.5, '/images/record17.jpg'), -- Dr. Le Thi Giau
+-- Bệnh nhân 6: Nguyen Thi Mai Linh, Khoa Da liễu, Chẩn đoán: Viêm da tiếp xúc (Contact Dermatitis)
+(6, 'Skin rash, itching', 'Contact Dermatitis', 'Steroid cream', 'Hydrocortisone', '2025-08-06', 27, 4.0, '/images/record18.jpg'), -- Dr. Tran Van En
+-- Bệnh nhân 7: Tran Van Hung, Khoa Tiêu hóa, Chẩn đoán: Trào ngược dạ dày thực quản (Gastroesophageal Reflux Disease)
+(7, 'Heartburn, abdominal pain', 'Gastroesophageal Reflux Disease', 'Proton pump inhibitors', 'Pantoprazole', '2025-07-25', 31, 4.0, '/images/record19.jpg'), -- Dr. Nguyen Van Linh
+-- Bệnh nhân 7: Tran Van Hung, Khoa Tiêu hóa, Chẩn đoán: Viêm gan B (Hepatitis B)
+(7, 'Jaundice, fatigue', 'Hepatitis B', 'Antiviral medication', 'Tenofovir', '2025-07-31', 32, 6.5, '/images/record20.jpg'), -- Dr. Tran Thi Mai
+-- Bệnh nhân 7: Tran Van Hung, Khoa Tiêu hóa, Chẩn đoán: Hội chứng ruột kích thích (Irritable Bowel Syndrome)
+(7, 'Abdominal pain, diarrhea', 'Irritable Bowel Syndrome', 'Dietary changes, medication', 'Loperamide', '2025-08-07', 33, 5.0, '/images/record21.jpg'), -- Dr. Le Van Nam
+-- Bệnh nhân 8: Le Thi Ngoc Anh, Khoa Mắt, Chẩn đoán: Đục thủy tinh thể (Cataract)
+(8, 'Blurred vision, glare sensitivity', 'Cataract', 'Cataract surgery', 'Post-surgical eye drops', '2025-07-26', 37, 6.0, '/images/record22.jpg'), -- Dr. Tran Van Sang
+-- Bệnh nhân 8: Le Thi Ngoc Anh, Khoa Mắt, Chẩn đoán: Hội chứng khô mắt (Dry Eye Syndrome)
+(8, 'Dry eyes, irritation', 'Dry Eye Syndrome', 'Moisturizing eye drops', 'Artificial tears', '2025-08-01', 36, 3.5, '/images/record23.jpg'), -- Dr. Nguyen Thi Quynh
+-- Bệnh nhân 8: Le Thi Ngoc Anh, Khoa Mắt, Chẩn đoán: Tăng nhãn áp (Glaucoma)
+(8, 'Eye pressure, vision loss', 'Glaucoma', 'Eye drops, monitoring', 'Latanoprost', '2025-08-07', 38, 6.5, '/images/record24.jpg'), -- Dr. Le Thi Thanh
+-- Bệnh nhân 9: Pham Van Thanh, Khoa Tai Mũi Họng, Chẩn đoán: Viêm tai giữa (Otitis Media)
+(9, 'Ear pain, hearing loss', 'Otitis Media', 'Antibiotics, ear drops', 'Amoxicillin', '2025-07-27', 41, 4.5, '/images/record25.jpg'), -- Dr. Nguyen Van Viet
+-- Bệnh nhân 9: Pham Van Thanh, Khoa Tai Mũi Họng, Chẩn đoán: Viêm xoang (Sinusitis)
+(9, 'Nasal congestion, headache', 'Sinusitis', 'Nasal spray, antibiotics', 'Fluticasone', '2025-08-02', 42, 5.0, '/images/record26.jpg'), -- Dr. Tran Thi Xuan
+-- Bệnh nhân 9: Pham Van Thanh, Khoa Tai Mũi Họng, Chẩn đoán: Viêm thanh quản (Laryngitis)
+(9, 'Sore throat, hoarseness', 'Laryngitis', 'Vocal rest, hydration', 'None', '2025-08-07', 44, 4.0, '/images/record27.jpg'), -- Dr. Pham Thi Anh
+-- Bệnh nhân 10: Hoang Thi Thu Ha, Khoa Tiết niệu, Chẩn đoán: Sỏi thận (Kidney Stones)
+(10, 'Blood in urine, flank pain', 'Kidney Stones', 'Hydration, muscle relaxants', 'Tamsulosin', '2025-07-28', 46, 6.0, '/images/record28.jpg'), -- Dr. Nguyen Thi Cam
+-- Bệnh nhân 10: Hoang Thi Thu Ha, Khoa Tiết niệu, Chẩn đoán: Nhiễm trùng đường tiết niệu (Urinary Tract Infection)
+(10, 'Frequent urination, pain', 'Urinary Tract Infection', 'Antibiotics', 'Nitrofurantoin', '2025-08-03', 50, 5.0, '/images/record29.jpg'), -- Dr. Hoang Thi Giang
+-- Bệnh nhân 10: Hoang Thi Thu Ha, Khoa Tiết niệu, Chẩn đoán: Phì đại tuyến tiền liệt lành tính (Benign Prostatic Hyperplasia)
+(10, 'Prostate enlargement, weak stream', 'Benign Prostatic Hyperplasia', 'Alpha blockers', 'Tamsulosin', '2025-08-07', 48, 5.5, '/images/record30.jpg'), -- Dr. Le Thi Em
+-- Bệnh nhân 11: Nguyen Van Long, Khoa Tim mạch, Chẩn đoán: Bệnh động mạch vành (Coronary Artery Disease)
+(11, 'Left chest pain', 'Coronary Artery Disease', 'Vasodilators, lifestyle changes', 'Isosorbide', '2025-07-29', 51, 6.0, '/images/record31.jpg'), -- Dr. Le Dinh Nguyen
+-- Bệnh nhân 11: Nguyen Van Long, Khoa Tim mạch, Chẩn đoán: Đau thắt ngực (Angina)
+(11, 'Shortness of breath', 'Angina', 'Rest, medication', 'Nitroglycerin', '2025-08-04', 1, 5.5, '/images/record32.jpg'), -- Dr. Nguyen Van An
+-- Bệnh nhân 11: Nguyen Van Long, Khoa Tim mạch, Chẩn đoán: Rối loạn nhịp tim (Arrhythmia)
+(11, 'Palpitations, fatigue', 'Arrhythmia', 'Beta blockers', 'Metoprolol', '2025-08-07', 2, 5.0, '/images/record33.jpg'), -- Dr. Tran Thi Bich
+-- Bệnh nhân 12: Tran Thi Kim Oanh, Khoa Thần kinh, Chẩn đoán: Rối loạn tiền đình (Vestibular Disorder)
+(12, 'Dizziness, vertigo', 'Vestibular Disorder', 'Circulation-enhancing medication', 'Betahistine', '2025-07-30', 7, 4.5, '/images/record34.jpg'), -- Dr. Tran Van Giang
+-- Bệnh nhân 12: Tran Thi Kim Oanh, Khoa Thần kinh, Chẩn đoán: Đau nửa đầu (Migraine)
+(12, 'Headache, sensitivity to light', 'Migraine', 'Pain relief', 'Sumatriptan', '2025-08-05', 6, 6.5, '/images/record35.jpg'), -- Dr. Nguyen Thi Phuong
+-- Bệnh nhân 12: Tran Thi Kim Oanh, Khoa Thần kinh, Chẩn đoán: Alzheimer giai đoạn đầu (Early Alzheimer’s)
+(12, 'Memory loss, confusion', 'Early Alzheimer’s', 'Cognitive therapy', 'Donepezil', '2025-08-07', 8, 6.0, '/images/record36.jpg'), -- Dr. Le Thi Hoa
+-- Bệnh nhân 13: Le Van Phuc, Khoa Chấn thương chỉnh hình, Chẩn đoán: Bong gân mắt cá chân (Ankle Sprain)
+(13, 'Ankle pain, swelling', 'Ankle Sprain', 'Bandaging, rest', 'Ibuprofen', '2025-07-31', 13, 4.5, '/images/record37.jpg'), -- Dr. Le Van Minh
+-- Bệnh nhân 13: Le Van Phuc, Khoa Chấn thương chỉnh hình, Chẩn đoán: Hẹp ống sống (Spinal Stenosis)
+(13, 'Back pain, stiffness', 'Spinal Stenosis', 'Physical therapy', 'Gabapentin', '2025-08-06', 14, 5.5, '/images/record38.jpg'), -- Dr. Pham Thi Nga
+-- Bệnh nhân 13: Le Van Phuc, Khoa Chấn thương chỉnh hình, Chẩn đoán: Viêm khớp dạng thấp (Rheumatoid Arthritis)
+(13, 'Joint pain, swelling', 'Rheumatoid Arthritis', 'Anti-inflammatory drugs', 'Methotrexate', '2025-08-07', 15, 6.0, '/images/record39.jpg'), -- Dr. Hoang Van On
+-- Bệnh nhân 14: Pham Thi Minh Thu, Khoa Nhi, Chẩn đoán: Viêm phổi (Pneumonia)
+(14, 'High fever, cough', 'Pneumonia', 'Antibiotics, fever reduction', 'Amoxicillin', '2025-08-01', 17, 6.0, '/images/record40.jpg'), -- Dr. Tran Van Son
+-- Bệnh nhân 14: Pham Thi Minh Thu, Khoa Nhi, Chẩn đoán: Viêm tai giữa (Otitis Media)
+(14, 'Ear infection, fever', 'Otitis Media', 'Antibiotics', 'Amoxicillin', '2025-08-06', 18, 5.0, '/images/record41.jpg'), -- Dr. Le Thi Tuyet
+-- Bệnh nhân 14: Pham Thi Minh Thu, Khoa Nhi, Chẩn đoán: Thiếu hormone tăng trưởng (Growth Hormone Deficiency)
+(14, 'Growth delay', 'Growth Hormone Deficiency', 'Hormone therapy', 'Somatropin', '2025-08-07', 19, 5.5, '/images/record42.jpg'), -- Dr. Pham Van Ut
+-- Bệnh nhân 15: Hoang Van Nam, Khoa Ung bướu, Chẩn đoán: U lympho (Lymphoma)
+(15, 'Swollen lymph nodes', 'Lymphoma', 'Chemotherapy, radiation', 'Cyclophosphamide', '2025-08-02', 22, 7.0, '/images/record43.jpg'), -- Dr. Tran Thi Yen
+-- Bệnh nhân 15: Hoang Van Nam, Khoa Ung bướu, Chẩn đoán: Ung thư phổi (Lung Cancer)
+(15, 'Chest pain, cough', 'Lung Cancer', 'Chemotherapy', 'Cisplatin', '2025-08-06', 25, 7.5, '/images/record44.jpg'), -- Dr. Hoang Van Canh
+-- Bệnh nhân 15: Hoang Van Nam, Khoa Ung bướu, Chẩn đoán: Ung thư di căn (Metastatic Cancer)
+(15, 'Bone pain, fatigue', 'Metastatic Cancer', 'Palliative care', 'Zoledronic Acid', '2025-08-07', 23, 8.0, '/images/record45.jpg'), -- Dr. Le Van Anh
+-- Bệnh nhân 16: Nguyen Thi Huong, Khoa Da liễu, Chẩn đoán: Chàm mãn tính (Chronic Eczema)
+(16, 'Dry, flaky skin', 'Chronic Eczema', 'Moisturizing cream', 'Eucerin', '2025-08-03', 28, 3.5, '/images/record46.jpg'), -- Dr. Le Thi Giau
+-- Bệnh nhân 16: Nguyen Thi Huong, Khoa Da liễu, Chẩn đoán: Vảy nến (Psoriasis)
+(16, 'Red patches, itching', 'Psoriasis', 'Topical steroids', 'Clobetasol', '2025-08-06', 30, 4.0, '/images/record47.jpg'), -- Dr. Hoang Thi Khanh
+-- Bệnh nhân 16: Nguyen Thi Huong, Khoa Da liễu, Chẩn đoán: Viêm mạch máu da (Rosacea)
+(16, 'Facial redness', 'Rosacea', 'Antibiotic cream', 'Metronidazole', '2025-08-07', 26, 3.5, '/images/record48.jpg'), -- Dr. Nguyen Thi Dieu
+-- Bệnh nhân 17: Tran Van Khoa, Khoa Tiêu hóa, Chẩn đoán: Viêm gan B (Hepatitis B)
+(17, 'Jaundice, fatigue', 'Hepatitis B', 'Antiviral medication', 'Tenofovir', '2025-08-04', 32, 6.5, '/images/record49.jpg'), -- Dr. Tran Thi Mai
+-- Bệnh nhân 17: Tran Van Khoa, Khoa Tiêu hóa, Chẩn đoán: Viêm dạ dày (Gastritis)
+(17, 'Abdominal pain, bloating', 'Gastritis', 'Proton pump inhibitors', 'Omeprazole', '2025-08-06', 31, 5.0, '/images/record50.jpg'), -- Dr. Nguyen Van Linh
+-- Bệnh nhân 17: Tran Van Khoa, Khoa Tiêu hóa, Chẩn đoán: Bệnh Crohn (Crohn’s Disease)
+(17, 'Diarrhea, weight loss', 'Crohn’s Disease', 'Immunosuppressants', 'Azathioprine', '2025-08-07', 33, 6.0, '/images/record51.jpg'), -- Dr. Le Van Nam
+-- Bệnh nhân 18: Le Thi Hong Ngoc, Khoa Mắt, Chẩn đoán: Hội chứng khô mắt (Dry Eye Syndrome)
+(18, 'Dry eyes, irritation', 'Dry Eye Syndrome', 'Moisturizing eye drops', 'Artificial tears', '2025-08-05', 36, 3.5, '/images/record52.jpg'), -- Dr. Nguyen Thi Quynh
+-- Bệnh nhân 18: Le Thi Hong Ngoc, Khoa Mắt, Chẩn đoán: Tăng nhãn áp (Glaucoma)
+(18, 'Blurred vision, halos', 'Glaucoma', 'Eye drops', 'Latanoprost', '2025-08-06', 38, 6.5, '/images/record53.jpg'), -- Dr. Le Thi Thanh
+-- Bệnh nhân 18: Le Thi Hong Ngoc, Khoa Mắt, Chẩn đoán: Bong võng mạc (Retinal Detachment)
+(18, 'Floaters, flashes', 'Retinal Detachment', 'Laser surgery', 'None', '2025-08-07', 39, 7.0, '/images/record54.jpg'), -- Dr. Pham Van Toan
+-- Bệnh nhân 19: Pham Van Quang, Khoa Tai Mũi Họng, Chẩn đoán: Viêm tai ngoài (Otitis Externa)
+(19, 'Ear pain, discharge', 'Otitis Externa', 'Ear drops', 'Ciprofloxacin', '2025-08-06', 45, 4.5, '/images/record55.jpg'), -- Dr. Hoang Van Binh
+-- Bệnh nhân 19: Pham Van Quang, Khoa Tai Mũi Họng, Chẩn đoán: Viêm xoang (Sinusitis)
+(19, 'Nasal congestion, facial pain', 'Sinusitis', 'Antibiotics, nasal spray', 'Amoxicillin', '2025-08-07', 42, 5.0, '/images/record56.jpg'), -- Dr. Tran Thi Xuan
+-- Bệnh nhân 19: Pham Van Quang, Khoa Tai Mũi Họng, Chẩn đoán: Viêm thanh quản (Laryngitis)
+(19, 'Hoarseness, throat pain', 'Laryngitis', 'Vocal rest, hydration', 'None', '2025-08-07', 44, 4.0, '/images/record57.jpg'), -- Dr. Pham Thi Anh
+-- Bệnh nhân 20: Hoang Thi Thanh Tam, Khoa Tiết niệu, Chẩn đoán: Nhiễm trùng đường tiết niệu (Urinary Tract Infection)
+(20, 'Frequent urination, burning', 'Urinary Tract Infection', 'Antibiotics', 'Nitrofurantoin', '2025-08-07', 50, 5.0, '/images/record58.jpg'), -- Dr. Hoang Thi Giang
+-- Bệnh nhân 20: Hoang Thi Thanh Tam, Khoa Tiết niệu, Chẩn đoán: Sỏi thận (Kidney Stones)
+(20, 'Flank pain, blood in urine', 'Kidney Stones', 'Hydration, pain relief', 'Tamsulosin', '2025-08-07', 46, 6.0, '/images/record59.jpg'), -- Dr. Nguyen Thi Cam
+-- Bệnh nhân 20: Hoang Thi Thanh Tam, Khoa Tiết niệu, Chẩn đoán: Viêm bàng quang kẽ (Interstitial Cystitis)
+(20, 'Bladder pain, urgency', 'Interstitial Cystitis', 'Bladder instillations', 'Heparin', '2025-08-07', 49, 5.5, '/images/record60.jpg'); -- Dr. Pham Van Fu

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select, { components } from "react-select";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import {  PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { useNavigate } from "react-router-dom";
 import "./Appointment.css";
 import $ from "jquery";
@@ -19,15 +19,21 @@ const CustomOption = (props) => {
   );
 };
 
-const SuccessMessage = () => {
+const SuccessMessage = ({ id }) => {
+  console.log("SuccessMessage id:", id);
+
   const navigate = useNavigate();
 
   const navigateToHomePage = () => {
     navigate("/");
   };
 
-  const navigateToDashBoard = () => {
-    navigate("/dashboard");
+  const navigateToAppointmentDetail = () => {
+    if (id) {
+      navigate(`/appointment/${id}`); // Đã đúng, sẽ mở chi tiết lịch khám
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   const scrollToTop = () => {
@@ -44,11 +50,95 @@ const SuccessMessage = () => {
       </div>
       <div className="button-group">
         <button onClick={navigateToHomePage}>Back to homepage</button>
-        <button onClick={navigateToDashBoard}>View Appointment</button>
+        <button onClick={navigateToAppointmentDetail}>View Appointment</button>
       </div>
     </div>
   );
 };
+
+// Popup component for doctor details
+const DoctorDetailPopup = ({ doctor, onClose }) => {
+  return (
+    <div className="doctor-detail-popup">
+      <div className="popup-content">
+        <img src={doctor.doctor_image} alt={doctor.doctor_name} />
+        <h3>{doctor.doctor_name}</h3>
+        <p>
+          <strong>Summary:</strong> {doctor.summary || "Not specified"}
+        </p>
+        <p>
+          <strong>Description:</strong>{" "}
+          {doctor.doctor_description || "Not specified"}
+        </p>
+        <p>
+          <strong>Phone:</strong> {doctor.doctor_phone || "Not specified"}
+        </p>
+        <p>
+          <strong>Address:</strong> {doctor.doctor_address || "Not specified"}
+        </p>
+        <button onClick={onClose} className="close-popup">
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Thêm component này sau DoctorDetailPopup và trước component Appointment
+const PayPalButtonWrapper = ({ doctorPrice, onSuccess }) => {
+  const [{ options, isPending }] = usePayPalScriptReducer();
+
+  if (isPending) {
+    return <div>Loading PayPal...</div>;
+  }
+
+  return (
+      <PayPalButtons
+          style={{
+            layout: "vertical",
+            color: "blue",
+            shape: "rect",
+            label: "paypal"
+          }}
+          createOrder={(data, actions) => {
+            return actions.order.create({
+              purchase_units: [
+                {
+                  amount: {
+                    value: doctorPrice.toString(),
+                    currency_code: "USD"
+                  },
+                  description: "Medical Appointment Booking"
+                }
+              ],
+              application_context: {
+                shipping_preference: "NO_SHIPPING"
+              }
+            });
+          }}
+          onApprove={async (data, actions) => {
+            try {
+              const details = await actions.order.capture();
+              console.log("Payment successful:", details);
+              await onSuccess(details);
+              return details;
+            } catch (error) {
+              console.error("Payment capture error:", error);
+              alert("Payment processing failed. Please try again.");
+            }
+          }}
+          onError={(err) => {
+            console.error("PayPal error:", err);
+            alert("Payment error occurred. Please try again.");
+          }}
+          onCancel={(data) => {
+            console.log("Payment cancelled:", data);
+          }}
+      />
+  );
+};
+
+
 
 const Appointment = () => {
   const [step, setStep] = useState(1);
@@ -60,6 +150,7 @@ const Appointment = () => {
     doctor: "",
     date: "",
     timeSlot: "",
+    note: "",
   });
   const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -76,6 +167,9 @@ const Appointment = () => {
   const [animationClass, setAnimationClass] = useState("");
   const [infoAnimationClass, setInfoAnimationClass] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showDoctorPopup, setShowDoctorPopup] = useState(false);
+  const [selectedDoctorForPopup, setSelectedDoctorForPopup] = useState(null);
+  const [newAppointmentId, setNewAppointmentId] = useState(null);
 
   const timeSlots = [
     { label: "08:00 AM - 09:00 AM", value: 1, start: "08:00", end: "09:00" },
@@ -121,11 +215,11 @@ const Appointment = () => {
   useEffect(() => {
     if (formData.date) {
       // Reset form fields that depend on date
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         timeSlot: "",
         department: "",
-        doctor: ""
+        doctor: "",
       }));
       setSelectedDepartment(null);
       setSelectedDoctor(null);
@@ -136,9 +230,9 @@ const Appointment = () => {
       const isToday = formData.date === today;
 
       if (isToday) {
-        // Filter out past time slots for today
-        const filteredSlots = timeSlots.filter(slot =>
-          !isTimeSlotPast(formData.date, slot.start)
+
+        const filteredSlots = timeSlots.filter(
+          (slot) => !isTimeSlotPast(formData.date, slot.start)
         );
 
         if (filteredSlots.length === 0) {
@@ -159,7 +253,9 @@ const Appointment = () => {
     if (formData.department) {
       // Get department info
       axios
-        .get(`http://localhost:8081/api/v1/departments/search?department_id=${formData.department}`)
+        .get(
+          `http://localhost:8081/api/v1/departments/search?department_id=${formData.department}`
+        )
         .then((response) => {
           if (response.data.length > 0) {
             setSelectedDepartment(response.data[0]);
@@ -169,16 +265,22 @@ const Appointment = () => {
           console.error("Error fetching department info!", error);
         });
 
-      // Get all doctors in the department
+      // Get all doctors in Department
       axios
-        .get(`http://localhost:8081/api/v1/departments/${formData.department}/doctors`)
+        .get(
+          `http://localhost:8081/api/v1/departments/${formData.department}/doctors`
+        )
         .then((response) => {
           const shuffledDoctors = shuffleArray(response.data);
           setDoctors(shuffledDoctors);
 
           // If time slot is selected, filter available doctors
           if (formData.timeSlot) {
-            filterAvailableDoctors(shuffledDoctors, formData.date, formData.timeSlot);
+            filterAvailableDoctors(
+              shuffledDoctors,
+              formData.date,
+              formData.timeSlot
+            );
           } else {
             setAvailableDoctors(shuffledDoctors);
           }
@@ -200,7 +302,9 @@ const Appointment = () => {
   useEffect(() => {
     if (formData.doctor) {
       axios
-        .get(`http://localhost:8081/api/v1/doctors/search?doctor_id=${formData.doctor}`)
+        .get(
+          `http://localhost:8081/api/v1/doctors/search?doctor_id=${formData.doctor}`
+        )
         .then((response) => {
           if (response.data.length > 0) {
             setSelectedDoctor(response.data[0]);
@@ -222,31 +326,35 @@ const Appointment = () => {
 
     try {
       // Get all appointments for the selected date and time slot
-      const appointmentPromises = doctorList.map(doctor =>
-        axios.get(`http://localhost:8081/api/v1/appointments/${doctor.doctor_id}/slots`)
-          .then(response => ({
+      const appointmentPromises = doctorList.map((doctor) =>
+        axios
+          .get(
+            `http://localhost:8081/api/v1/appointments/${doctor.doctor_id}/slots`
+          )
+          .then((response) => ({
             doctorId: doctor.doctor_id,
-            appointments: response.data
+            appointments: response.data,
           }))
-          .catch(error => ({
+          .catch((error) => ({
             doctorId: doctor.doctor_id,
-            appointments: []
+            appointments: [],
           }))
       );
 
       const doctorAppointments = await Promise.all(appointmentPromises);
 
       // Filter out doctors who are already booked
-      const finalAvailableDoctors = doctorList.filter(doctor => {
+      const finalAvailableDoctors = doctorList.filter((doctor) => {
         const doctorBookings = doctorAppointments.find(
-          booking => booking.doctorId === doctor.doctor_id
+          (booking) => booking.doctorId === doctor.doctor_id
         );
 
         if (!doctorBookings || !doctorBookings.appointments) return true;
 
-        const isBooked = doctorBookings.appointments.some(appointment => {
+        const isBooked = doctorBookings.appointments.some((appointment) => {
           const appointmentDate = new Date(appointment.medical_day)
-            .toISOString().split('T')[0];
+            .toISOString()
+            .split("T")[0];
           return appointmentDate === date && appointment.slot === timeSlot;
         });
 
@@ -256,12 +364,14 @@ const Appointment = () => {
       setAvailableDoctors(finalAvailableDoctors);
 
       // Reset doctor selection if current doctor is not available
-      if (formData.doctor && !finalAvailableDoctors.find(d => d.doctor_id === formData.doctor)) {
-        setFormData(prev => ({ ...prev, doctor: "" }));
+      if (
+        formData.doctor &&
+        !finalAvailableDoctors.find((d) => d.doctor_id === formData.doctor)
+      ) {
+        setFormData((prev) => ({ ...prev, doctor: "" }));
         setSelectedDoctor(null);
         setDoctorPrice(null);
       }
-
     } catch (error) {
       console.error("Error filtering available doctors!", error);
       setAvailableDoctors(doctorList);
@@ -302,7 +412,7 @@ const Appointment = () => {
   };
 
   const handleDateChange = (date) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       date: date,
       timeSlot: "",
@@ -316,7 +426,7 @@ const Appointment = () => {
   };
 
   const handleTimeSlotChange = (slot) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       timeSlot: slot,
       department: "",
@@ -329,7 +439,7 @@ const Appointment = () => {
   };
 
   const handleDepartmentChange = (selectedOption) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       department: selectedOption ? selectedOption.value : "",
       doctor: "",
@@ -342,12 +452,22 @@ const Appointment = () => {
   };
 
   const handleDoctorSelect = (doctor) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       doctor: doctor.doctor_id,
     }));
     setSelectedDoctor(doctor);
     setDoctorPrice(doctor.doctor_price);
+  };
+
+  const handleShowDoctorDetails = (doctor) => {
+    setSelectedDoctorForPopup(doctor);
+    setShowDoctorPopup(true);
+  };
+
+  const handleCloseDoctorPopup = () => {
+    setShowDoctorPopup(false);
+    setSelectedDoctorForPopup(null);
   };
 
   const getTimeSlotLabel = (slotValue) => {
@@ -400,9 +520,7 @@ const Appointment = () => {
     await submitAppointment();
   };
 
-  const submitAppointment = async () => {
-    console.log("Selected Doctor before sending:", selectedDoctor);
-    console.log("Selected Department before sending:", selectedDepartment);
+  const submitAppointment = async (paymentType = "CREDIT_CARD") => {
 
     const dataToSend = {
       ...formData,
@@ -410,7 +528,7 @@ const Appointment = () => {
       medical_day: formData.date,
       slot: formData.timeSlot,
       doctor_id: formData.doctor,
-      status: "Pending",
+      status: "PENDING",
       patient_username: formData.patient_email,
       patient_password: generateRandomPassword(),
       doctor_name: selectedDoctor ? selectedDoctor.doctor_name : "",
@@ -418,6 +536,8 @@ const Appointment = () => {
         ? selectedDepartment.department_name
         : "",
       price: doctorPrice,
+      payment_name: paymentType,
+      staff_id: Math.floor(Math.random() * 10) + 1,
     };
 
     console.log("Data To Send:", dataToSend);
@@ -427,8 +547,9 @@ const Appointment = () => {
         "http://localhost:8081/api/v1/appointments/insert",
         dataToSend
       );
-      console.log(response.data);
-      setShowSuccess(true);
+      console.log("API response:", response.data); // Thêm dòng này để kiểm tra
+      setNewAppointmentId(response.data.appointment_id);
+      setShowSuccess(true); // Sau đó mới show success
 
       const timeSlotLabel = getTimeSlotLabel(dataToSend.slot);
 
@@ -552,7 +673,7 @@ const Appointment = () => {
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array.join("");
-  };
+  }
 
   const generateDateButtons = () => {
     const today = new Date();
@@ -566,8 +687,8 @@ const Appointment = () => {
           i === 0
             ? `Today (${dateString})`
             : i === 1
-              ? `Tomorrow (${dateString})`
-              : `Day after tomorrow (${dateString})`,
+            ? `Tomorrow (${dateString})`
+            : `Day after tomorrow (${dateString})`,
         value: dateString,
       });
     }
@@ -611,7 +732,8 @@ const Appointment = () => {
       return (
         <div className="time-container">
           <p style={{ color: "red", textAlign: "center", padding: "20px" }}>
-            Today's working hours are over, please select tomorrow or another date.
+            Today's working hours are over, please select tomorrow or another
+            date.
           </p>
         </div>
       );
@@ -660,7 +782,8 @@ const Appointment = () => {
         <div className="doctor-list">
           <label style={{ color: "black" }}>Doctors</label>
           <p style={{ textAlign: "center", color: "#666", padding: "20px" }}>
-            No doctors available for the selected time slot. Please choose a different time.
+            No doctors available for the selected time slot. Please choose a
+            different time.
           </p>
         </div>
       );
@@ -668,24 +791,49 @@ const Appointment = () => {
 
     return (
       <div className="doctor-list">
-        <label style={{ color: "black" }}>Doctors Available for Selected Time</label>
+        <label style={{ color: "black" }}>
+          Doctors Available for Selected Time
+        </label>
         <div className="doctors-container">
           {doctorsToShow.map((doctor) => (
             <div
               key={doctor.doctor_id}
-              className={`doctor-card ${formData.doctor === doctor.doctor_id ? "selected" : ""
-                }`}
+              className={`doctor-card ${
+                formData.doctor === doctor.doctor_id ? "selected" : ""
+              }`}
               onClick={() => handleDoctorSelect(doctor)}
             >
               <img src={doctor.doctor_image} alt={doctor.doctor_name} />
               <div>
                 <h4>{doctor.doctor_name}</h4>
-                <p>{doctor.doctor_description}</p>
-                <p>Price: ${doctor.doctor_price}</p>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "75px",
+                  }}
+                >
+                  <p>Price: ${doctor.doctor_price}</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering handleDoctorSelect
+                      handleShowDoctorDetails(doctor);
+                    }}
+                    className="details-button"
+                  >
+                    View
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
+        {showDoctorPopup && selectedDoctorForPopup && (
+          <DoctorDetailPopup
+            doctor={selectedDoctorForPopup}
+            onClose={handleCloseDoctorPopup}
+          />
+        )}
       </div>
     );
   };
@@ -736,239 +884,319 @@ const Appointment = () => {
     }
   });
 
+
+
   return (
     <main className="services-container">
-      <h4 className="services-title">Appointment Booking</h4>
-      <section className="process-bar">
-        <div className="process-bar-step1">1</div>
-        <div className="process-bar-line12"></div>
-        <div className="process-bar-step2">2</div>
-        <div className="process-bar-line23"></div>
-        <div className="process-bar-step3">3</div>
-      </section>
-      <section className="services-form-container">
-        {showSuccess && <SuccessMessage />}
-        {!showSuccess && (
-          <>
-            {step === 1 && (
-              <div className={`form-section1 ${animationClass}`}>
-                <h3>Select Appointment Date, Time, Department, and Doctor</h3>
-                {renderDateButtons()}
-                {formData.date && renderTimeSlots()}
-                {formData.timeSlot && (
-                  <div>
-                    <label style={{ color: "black" }} htmlFor="department">Department</label>
-                    <Select
-                      id="department"
-                      name="department"
-                      options={departmentOptions}
-                      onChange={handleDepartmentChange}
-                      value={departmentOptions.find(
-                        (option) => option.value === formData.department
+      <div className="background">
+        <h4 className="services-title">Appointment Booking</h4>
+        <section className="process-bar">
+          <div className="process-bar-step1">1</div>
+          <div className="process-bar-line12"></div>
+          <div className="process-bar-step2">2</div>
+          <div className="process-bar-line23"></div>
+          <div className="process-bar-step3">3</div>
+        </section>
+        <section className="services-form-container">
+          {showSuccess && <SuccessMessage id={newAppointmentId}/>}
+          {!showSuccess && (
+              <>
+                {step === 1 && (
+                    <div className={`form-section1 ${animationClass}`}>
+                      <h3>Select Appointment Date, Time, Department, and Doctor</h3>
+                      {renderDateButtons()}
+                      {formData.date && renderTimeSlots()}
+                      {formData.timeSlot && (
+                          <div>
+                            <label style={{color: "black"}} htmlFor="department">
+                              Department
+                            </label>
+                            <Select
+                                id="department"
+                                name="department"
+                                options={departmentOptions}
+                                onChange={handleDepartmentChange}
+                                value={departmentOptions.find(
+                                    (option) => option.value === formData.department
+                                )}
+                                components={{Option: CustomOption}}
+                            />
+                          </div>
                       )}
-                      components={{ Option: CustomOption }}
-                    />
-                    {selectedDepartment && (
-                      <div className="department-info">
-                        <h4>{selectedDepartment.department_name}</h4>
-                        <div>
-                          <p>{selectedDepartment.department_description}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                      {formData.department && renderDoctorsList()}
+                      <button
+                          onClick={handleNextStep}
+                          className="next-step"
+                          disabled={
+                              !formData.date ||
+                              !formData.timeSlot ||
+                              !formData.department ||
+                              !formData.doctor ||
+                              isAnimating
+                          }
+                      >
+                        Next Step
+                      </button>
+                    </div>
                 )}
-                {formData.department && renderDoctorsList()}
-                <button
-                  onClick={handleNextStep}
-                  className="next-step"
-                  disabled={
-                    !formData.date ||
-                    !formData.timeSlot ||
-                    !formData.department ||
-                    !formData.doctor ||
-                    isAnimating
-                  }
-                >
-                  Next Step
-                </button>
-              </div>
-            )}
 
-            {step === 2 && (
-              <div className={`form-section2 ${animationClass}`}>
-                <h3>Enter Patient Information</h3>
-                <div>
-                  <label style={{ color: "black" }} htmlFor="patient_name">Full Name</label>
-                  <input
-                    type="text"
-                    id="patient_name"
-                    name="patient_name"
-                    value={formData.patient_name}
-                    onChange={handleChange}
-                    required
-                  />
-                  {nameError && <p style={{ color: "red" }}>{nameError}</p>}
-                </div>
-                <div>
-                  <label style={{ color: "black" }} htmlFor="patient_email">Email</label>
-                  <input
-                    type="email"
-                    id="patient_email"
-                    name="patient_email"
-                    value={formData.patient_email}
-                    onChange={handleChange}
-                    required
-                  />
-                  {emailError && <p style={{ color: "red" }}>{emailError}</p>}
-                </div>
-                <div>
-                  <label style={{ color: "black" }} htmlFor="patient_phone">Phone Number</label>
-                  <input
-                    type="text"
-                    id="patient_phone"
-                    name="patient_phone"
-                    value={formData.patient_phone}
-                    onChange={handleChange}
-                    required
-                  />
-                  {phoneError && <p style={{ color: "red" }}>{phoneError}</p>}
-                </div>
-                <div className="button-grp">
-                  <button
-                    onClick={handlePrevStep}
-                    disabled={isAnimating}
-                    className="prev-step"
-                  >
-                    Previous Step
-                  </button>
-                  <button
-                    onClick={handleNextStep}
-                    className="next-step"
-                    disabled={
-                      !formData.patient_name ||
-                      !formData.patient_email ||
-                      !formData.patient_phone ||
-                      phoneError ||
-                      emailError ||
-                      nameError ||
-                      isAnimating
-                    }
-                  >
-                    Next Step
-                  </button>
-                </div>
-              </div>
-            )}
+                {step === 2 && (
+                    <div className={`form-section2 ${animationClass}`}>
+                      <h3>Enter Patient Information</h3>
+                      <div>
+                        <label style={{color: "black"}} htmlFor="patient_name">
+                          Full Name
+                        </label>
+                        <input
+                            type="text"
+                            id="patient_name"
+                            name="patient_name"
+                            value={formData.patient_name}
+                            onChange={handleChange}
+                            required
+                        />
+                        {nameError && <p style={{color: "red"}}>{nameError}</p>}
+                      </div>
+                      <div>
+                        <label style={{color: "black"}} htmlFor="patient_email">
+                          Email
+                        </label>
+                        <input
+                            type="email"
+                            id="patient_email"
+                            name="patient_email"
+                            value={formData.patient_email}
+                            onChange={handleChange}
+                            required
+                        />
+                        {emailError && <p style={{color: "red"}}>{emailError}</p>}
+                      </div>
+                      <div>
+                        <label style={{color: "black"}} htmlFor="patient_phone">
+                          Phone Number
+                        </label>
+                        <input
+                            type="text"
+                            id="patient_phone"
+                            name="patient_phone"
+                            value={formData.patient_phone}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (/^\d{0,10}$/.test(value)) {
+                                handleChange(e);
+                              }
+                            }}
+                            maxLength={10}
+                            required
+                        />
 
-            {step === 3 && (
-              <div className={`form-section3 ${animationClass}`}>
-                <h3>Confirm Information And Payment</h3>
-                <div className="payment-container">
-                  <div className="appointment-div">
-                    <h4>Appointment Information</h4>
-                    <p>
-                      Department:{" "}
-                      {selectedDepartment
-                        ? selectedDepartment.department_name
-                        : ""}
-                    </p>
-                    <p>
-                      Doctor: {selectedDoctor ? selectedDoctor.doctor_name : ""}
-                    </p>
-                    <p>Date: {formData.date}</p>
-                    <p>
-                      Time:{" "}
-                      {availableSlots.find(
-                        (slot) => slot.value === formData.timeSlot
-                      )?.label || ""}
-                    </p>
-                    <p>Total: {doctorPrice}$</p>
-                  </div>
-                  <div className="patient-div">
-                    <h4>Patient Information</h4>
-                    <p>Full Name: {formData.patient_name}</p>
-                    <p>Email: {formData.patient_email}</p>
-                    <p>Phone Number: {formData.patient_phone}</p>
-                  </div>
-                </div>
-                <PayPalScriptProvider
-                  options={{
-                    "client-id":
-                      "AeG-ZT8O4yhQvzCBjVp-w4bNu4oa0O1u7CIMWVg5MBDGmWQ3KwgQuDASxQup6DqOCCuo1QKILXWt4rUD",
-                    currency: "USD",
-                  }}
-                >
-                  <PayPalButtons
-                    createOrder={(data, actions) => {
-                      return actions.order.create({
-                        purchase_units: [
-                          {
-                            amount: {
-                              value: doctorPrice.toString(),
-                            },
-                          },
-                        ],
-                      });
-                    }}
-                    onApprove={(data, actions) => {
-                      return actions.order.capture().then((details) => {
-                        setStep(4);
-                        setShowSuccess(true);
-                        submitAppointment();
-                      });
-                    }}
-                  />
-                </PayPalScriptProvider>
-                <button
-                  onClick={handlePrevStep}
-                  disabled={isAnimating}
-                  className="prev-step"
-                >
-                  Previous Step
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </section>
+                        {phoneError && <p style={{color: "red"}}>{phoneError}</p>}
+                      </div>
+                      <div>
+                        <label style={{color: "black"}} htmlFor="note">
+                          Symptoms
+                        </label>
+                        <input
+                            type="text"
+                            id="note"
+                            name="note"
+                            value={formData.note}
+                            onChange={handleChange}
+                            required
+                        />
+                        {nameError && <p style={{color: "red"}}>{nameError}</p>}
+                      </div>
+                      <div></div>
+                      <div className="button-grp">
+                        <button
+                            onClick={handlePrevStep}
+                            disabled={isAnimating}
+                            className="prev-step"
+                        >
+                          Previous Step
+                        </button>
+                        <button
+                            onClick={handleNextStep}
+                            className="next-step"
+                            disabled={
+                                !formData.patient_name ||
+                                !formData.patient_email ||
+                                !formData.patient_phone ||
+                                phoneError ||
+                                emailError ||
+                                nameError ||
+                                isAnimating
+                            }
+                        >
+                          Next Step
+                        </button>
+                      </div>
+                    </div>
+                )}
+
+                {step === 3 && (
+                    <div className={`form-section3 ${animationClass}`}>
+                      <h3>Confirm Information And Payment</h3>
+
+                        <div className="profile-card">
+
+
+                          <div className="profile-section1">
+                            <h4>Medical Information</h4>
+                            <div className="info-row">
+                              <span className="label">Department:</span>
+                              <span className="value">
+          {selectedDepartment ? selectedDepartment.department_name : ""}
+        </span>
+                            </div>
+                            <div className="info-row">
+                              <span className="label">Doctor:</span>
+                              <span className="value">
+          {selectedDoctor ? selectedDoctor.doctor_name : ""}
+        </span>
+                            </div>
+                            <div className="info-row">
+                              <span className="label">Date:</span>
+                              <span className="value">{formData.date}</span>
+                            </div>
+                            <div className="info-row">
+                              <span className="label">Time:</span>
+                              <span className="value">
+          {availableSlots.find((slot) => slot.value === formData.timeSlot)?.label || ""}
+        </span>
+                            </div>
+                          </div>
+
+                          <div className="profile-section1">
+                            <h4>Patient Information</h4>
+                            <div className="info-row">
+                              <span className="label">Full Name:</span>
+                              <span className="value">{formData.patient_name}</span>
+                            </div>
+                            <div className="info-row">
+                              <span className="label">Email:</span>
+                              <span className="value">{formData.patient_email}</span>
+                            </div>
+                            <div className="info-row">
+                              <span className="label">Phone:</span>
+                              <span className="value">{formData.patient_phone}</span>
+                            </div>
+                            <div className="info-row">
+                              <span className="label">Symptoms:</span>
+                              <span className="value">{formData.note}</span>
+                            </div>
+                          </div>
+
+                          <div className="profile-section1 total-section">
+                            <div className="total-row">
+                              <span className="total-label">Total Amount:</span>
+                              <span className="total-amount">${doctorPrice}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                      {doctorPrice && (
+                          <div className="paypal-button-container">
+                            <h4>Payment Options</h4>
+
+                            <button
+                                style={{marginTop: "20px"}}
+                                onClick={async () => {
+                                  await submitAppointment("CASH");
+                                  setStep(4);
+                                  setShowSuccess(true);
+                                }}
+                                className="cash-payment-button"
+                            >
+                              Pay with Cash
+                            </button>
+
+                            <PayPalButtonWrapper
+                                doctorPrice={doctorPrice}
+                                onSuccess={async (details) => {
+                                  await submitAppointment("CREDIT_CARD");
+                                  setTimeout(() => {
+                                    setStep(4);
+                                    setShowSuccess(true);
+                                  }, 500);
+                                }}
+                            />
+
+
+                          </div>
+                      )}
+
+                      <button
+                          onClick={handlePrevStep}
+                          disabled={isAnimating}
+                          className="prev-step"
+                      >
+                        Previous Step
+                      </button>
+                    </div>
+                )}
+              </>
+          )}
+        </section>
+      </div>
       <footer>
         <div className="footer-container-top">
           <div className="footer-logo">
-            <img src={logo} alt="fpt-health" style={{ width: 140 + 'px', height: 40 + 'px' }} />
+            <img
+                src={logo}
+                alt="fpt-health"
+                style={{width: 140 + "px", height: 40 + "px"}}
+            />
           </div>
           <div className="footer-social">
             <div className="fb-icon">
-              <img width="30" height="30"
-                src="https://img.icons8.com/ios-filled/50/FFFFFF/facebook--v1.png"
-                alt="facebook--v1" />
+              <img
+                  width="30"
+                  height="30"
+                  src="https://img.icons8.com/ios-filled/50/FFFFFF/facebook--v1.png"
+                  alt="facebook--v1"
+              />
             </div>
             <div className="zl-icon">
-              <img width="30" height="30" src="https://img.icons8.com/ios-filled/50/FFFFFF/zalo.png"
-                alt="zalo" />
+              <img
+                  width="30"
+                  height="30"
+                  src="https://img.icons8.com/ios-filled/50/FFFFFF/zalo.png"
+                  alt="zalo"
+              />
             </div>
             <div className="ms-icon">
-              <img width="30" height="30"
-                src="https://img.icons8.com/ios-filled/50/FFFFFF/facebook-messenger.png"
-                alt="facebook-messenger" />
+              <img
+                  width="30"
+                  height="30"
+                  src="https://img.icons8.com/ios-filled/50/FFFFFF/facebook-messenger.png"
+                  alt="facebook-messenger"
+              />
             </div>
           </div>
         </div>
         <div className="footer-container-middle">
           <div className="footer-content">
             <h4>FPT Health</h4>
-            <p>FPT Health Hospital is committed to providing you and your family with the highest quality
-              medical services, featuring a team of professional doctors and state-of-the-art facilities.
-              Your health is our responsibility.</p>
+            <p>
+              FPT Health Hospital is committed to providing you and your family
+              with the highest quality medical services, featuring a team of
+              professional doctors and state-of-the-art facilities. Your health
+              is our responsibility.
+            </p>
           </div>
           <div className="footer-hours-content">
             <h4>Opening Hours</h4>
             <div className="footer-hours">
-              <div className="footer-content-item"><span>Monday - Friday:</span>
-                <span>7:00 AM - 8:00 PM</span></div>
-              <div className="footer-content-item"><span>Saturday:</span> <span>7:00 AM - 6:00 PM</span>
+              <div className="footer-content-item">
+                <span>Monday - Friday:</span>
+                <span>7:00 AM - 8:00 PM</span>
               </div>
-              <div className="footer-content-item"><span>Sunday:</span> <span>7:30 AM - 6:00 PM</span>
+              <div className="footer-content-item">
+                <span>Saturday:</span> <span>7:00 AM - 6:00 PM</span>
+              </div>
+              <div className="footer-content-item">
+                <span>Sunday:</span> <span>7:30 AM - 6:00 PM</span>
               </div>
             </div>
           </div>
@@ -977,22 +1205,36 @@ const Appointment = () => {
             <div className="footer-contact">
               <div className="footer-contact-item">
                 <div>
-                  <img width="20" height="20"
-                    src="https://img.icons8.com/ios-filled/50/FFFFFF/marker.png" alt="marker" />
+                  <img
+                      width="20"
+                      height="20"
+                      src="https://img.icons8.com/ios-filled/50/FFFFFF/marker.png"
+                      alt="marker"
+                  />
                 </div>
-                <p>8 Ton That Thuyet, My Dinh Ward, Nam Tu Liem District, Ha Noi</p>
+                <p>
+                  8 Ton That Thuyet, My Dinh Ward, Nam Tu Liem District, Ha Noi
+                </p>
               </div>
               <div className="footer-contact-item">
                 <div>
-                  <img width="20" height="20"
-                    src="https://img.icons8.com/ios-filled/50/FFFFFF/phone.png" alt="phone" />
+                  <img
+                      width="20"
+                      height="20"
+                      src="https://img.icons8.com/ios-filled/50/FFFFFF/phone.png"
+                      alt="phone"
+                  />
                 </div>
                 <p>+84 987 654 321</p>
               </div>
               <div className="footer-contact-item">
                 <div>
-                  <img width="20" height="20"
-                    src="https://img.icons8.com/ios-filled/50/FFFFFF/new-post.png" alt="new-post" />
+                  <img
+                      width="20"
+                      height="20"
+                      src="https://img.icons8.com/ios-filled/50/FFFFFF/new-post.png"
+                      alt="new-post"
+                  />
                 </div>
                 <p>fpthealth@gmail.com</p>
               </div>
@@ -1001,7 +1243,9 @@ const Appointment = () => {
         </div>
         <div className="footer-container-bottom">
           <div>© 2024 FPT Health. All rights reserved.</div>
-          <div><a>Terms of use</a> | <a>Privacy Policy</a></div>
+          <div>
+            <a>Terms of use</a> | <a>Privacy Policy</a>
+          </div>
         </div>
       </footer>
     </main>

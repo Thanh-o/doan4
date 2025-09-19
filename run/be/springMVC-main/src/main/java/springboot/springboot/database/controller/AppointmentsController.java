@@ -39,7 +39,7 @@ public class AppointmentsController<T extends Entity<?>> {
     }
 
     @PostMapping("/insert")
-    public void insert(@RequestBody Map<String, Object> requestData) throws SQLException, IllegalAccessException, InstantiationException {
+    public Map<String, Object> insert(@RequestBody Map<String, Object> requestData) throws SQLException, IllegalAccessException, InstantiationException {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.addConverter(new StringToDateConverter());
 
@@ -53,7 +53,6 @@ public class AppointmentsController<T extends Entity<?>> {
 
         Integer patientId;
         if (existingPatients.isEmpty()) {
-            patient.setPatient_username(patient.getPatient_email());
             // Insert new patient if not exists
             patientId = model.insert(patient);
 
@@ -72,7 +71,12 @@ public class AppointmentsController<T extends Entity<?>> {
         // Map requestData to Appointments
         Appointments appointments = modelMapper.map(requestData, Appointments.class);
         appointments.setPatient_id(patientId);
-        model.insert(appointments);
+        Integer appointmentId = model.insert(appointments); // Lấy id lịch hẹn vừa tạo
+
+        // Trả về appointment_id cho FE
+        Map<String, Object> response = new HashMap<>();
+        response.put("appointment_id", appointmentId);
+        return response;
     }
 
 

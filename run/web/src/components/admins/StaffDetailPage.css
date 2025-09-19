@@ -1,0 +1,54 @@
+.staff-detail-page {
+    display: flex;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h4 {
+    margin: 0;
+}
+
+.back-button {
+    padding: 10px;
+    border: none;
+    background-color: #D90000;
+    color: white;
+    outline: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.back-button:hover{
+    background-color: white;
+    color: #D90000;
+    box-shadow: 0 0 3px #D90000;
+}
+
+.staff-info {
+    margin-top: 20px;
+}
+
+.staff-info h5 {
+    margin-top: 0;
+}
+
+.feedback-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

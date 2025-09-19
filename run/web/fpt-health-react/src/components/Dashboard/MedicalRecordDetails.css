@@ -1,0 +1,273 @@
+.medical-record-details-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+  margin-top: 80px;
+}
+
+.medical-record-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  font-family: 'Arial', sans-serif;
+}
+
+
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e9ecef;
+  border: none;
+  color: #495057;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: #dee2e6;
+}
+
+.record-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.record-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  color: #343a40;
+  font-weight: 600;
+}
+
+.patient-name {
+  font-size: 20px;
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.record-meta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.record-content {
+  margin-top: 20px;
+}
+
+.record-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+}
+
+.section-title {
+  background-color: #f8f9fa;
+
+  border-bottom: 1px solid #dee2e6;
+
+  align-items: center;
+
+  font-size: 18px;
+  font-weight: 600;
+  color: #495057;
+  margin:0 0 20px 0  ;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.label {
+  font-weight: 500;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.value {
+  font-size: 16px;
+  color: #343a40;
+  word-break: break-word;
+}
+
+.detail-item {
+  margin-bottom: 15px;
+}
+
+.detail-item .label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.detail-item .value {
+  display: block;
+  padding: 10px;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.prescription-section {
+  margin-top: 20px;
+}
+
+.prescription-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 10px;
+}
+
+.prescription-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.prescription-table th {
+  background: #007bff;
+  color: #ffffff;
+  padding: 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.prescription-table td {
+  padding: 12px;
+  border-top: 1px solid #dee2e6;
+  font-size: 14px;
+  color: #343a40;
+}
+
+.prescription-table tr:nth-child(even) td {
+  background: #f8f9fa;
+}
+
+.image-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.record-image {
+  max-width: 100%;
+  max-height: 300px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.record-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+.action-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  margin: 0 5px;
+  transition: background-color 0.2s ease;
+}
+
+.action-button:hover {
+  background: #0056b3;
+  color: #ffffff;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .medical-record-details-page {
+    padding: 10px;
+  }
+
+  .medical-record-container {
+    padding: 20px;
+  }
+
+  .record-meta {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.diagnosis-html-content {
+  line-height: 1.6;
+}
+
+.diagnosis-html-content h3,
+.diagnosis-html-content h4 {
+  margin: 8px 0 4px 0;
+  font-weight: bold;
+  color: #333;
+}
+
+.diagnosis-html-content h3 {
+  font-size: 16px;
+}
+
+.diagnosis-html-content h4 {
+  font-size: 14px;
+}
+
+.diagnosis-html-content ul,
+.diagnosis-html-content ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.diagnosis-html-content li {
+  margin: 4px 0;
+}
+
+.diagnosis-html-content p {
+  margin: 4px 0;
+}
+
+.diagnosis-html-content strong {
+  font-weight: bold;
+}
+
+.diagnosis-html-content em {
+  font-style: italic;
+}
+
+.diagnosis-html-content u {
+  text-decoration: underline;
+}

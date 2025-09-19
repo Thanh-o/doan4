@@ -111,7 +111,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
             name = patientData[0]['patient_name'] ?? '';
             if (patientData[0]['patient_img'] != null &&
                 patientData[0]['patient_img'] != '') {
-              imagePath = 'http://10.0.2.2:8081/${patientData[0]['patient_img']}';
+              imagePath = '${patientData[0]['patient_img']}';
               imageValid = true;
             } else {
               imageValid = false;

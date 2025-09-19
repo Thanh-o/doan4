@@ -315,9 +315,9 @@ function Diagnosis() {
               <p>
                 <strong>Prescription:</strong> {predictionResult.prescription}
               </p>
-              <p>
-                <strong>Severity:</strong> {predictionResult.severity}
-              </p>
+              {/*<p>*/}
+              {/*  <strong>Severity:</strong> {predictionResult.severity}*/}
+              {/*</p>*/}
             </div>
           )}
           {comparisonMessage && (

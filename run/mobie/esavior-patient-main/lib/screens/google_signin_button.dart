@@ -16,9 +16,24 @@ class GoogleSignInButton extends StatelessWidget {
     );
 
     try {
+      print('🔄 Starting Google Sign-In...');
+
+      // Clear any existing session first
+      await _googleSignIn.signOut();
+      print('🚪 Cleared previous session');
+
+      print('⏳ Attempting sign-in...');
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
       if (googleUser != null) {
+        print('✅ Sign-in successful!');
+        print('👤 User: ${googleUser.displayName}');
+        print('📧 Email: ${googleUser.email}');
+        print('🆔 ID: ${googleUser.id}');
+
         String randomPassword = _generateRandomPassword();
+
+        print('🌐 Sending request to server...');
         final response = await http.post(
           Uri.parse('http://10.0.2.2:8081/api/v1/patients/google-login'),
           headers: {'Content-Type': 'application/json'},
@@ -29,51 +44,81 @@ class GoogleSignInButton extends StatelessWidget {
           }),
         );
 
+        print('📡 Server response status: ${response.statusCode}');
+        print('📡 Server response body: ${response.body}');
+
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
           String? patientId = data['patient_id']?.toString();
-          String? patientName = data['patient_name'];
+
+          // FIX: Server trả về 'patient_username', không phải 'patient_name'
+          String? patientName = data['patient_name'] ?? data['patient_username'];
+
+          // Fallback: nếu server không trả về tên, dùng tên từ Google
+          patientName ??= googleUser.displayName ?? 'Unknown User';
+
+          print('🆔 Patient ID from server: $patientId');
+          print('👤 Patient Name resolved: $patientName');
 
           if (patientId != null && patientName != null) {
-            int parsedPatientId = int.tryParse(patientId) ?? 0; // Chuyển đổi sang int
+            int parsedPatientId = int.tryParse(patientId) ?? 0;
             if (parsedPatientId > 0) {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.setInt('patient_id', parsedPatientId);
               await prefs.setBool('isLoggedIn', true);
 
+              print('💾 Saved to SharedPreferences successfully');
+
               onLoginSuccess(patientName, patientId);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    'Logged in successfully via Google\nAccount: ${googleUser.email}',
+                    'Logged in successfully !!!',
                   ),
+                  backgroundColor: Colors.green,
                 ),
               );
-              // Không cần điều hướng thủ công
             } else {
+              print('❌ Invalid patient_id: $patientId');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Invalid patient_id from server')),
               );
             }
           } else {
+            print('❌ Missing patient_id or patient_name in response');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Invalid response from server')),
             );
           }
         } else {
+          print('❌ Server error: ${response.statusCode}');
+          print('❌ Error body: ${response.body}');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login failed, try again.')),
+            SnackBar(content: Text('Server error: ${response.statusCode}')),
           );
         }
+      } else {
+        print('❌ User cancelled sign-in or sign-in failed');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign-in was cancelled')),
+        );
       }
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: $error')),
-      );
-      print('Google sign-in error: $error');
+      print('❌ Exception occurred: $error');
+      print('❌ Exception type: ${error.runtimeType}');
+
+      if (error.toString().contains('ApiException: 10')) {
+        print('🔧 This is a configuration error - check SHA-1 fingerprint and google-services.json');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Configuration error. Check app setup.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: $error')),
+        );
+      }
     }
   }
-
   String _generateRandomPassword() {
     // Hàm này sẽ tạo một mật khẩu ngẫu nhiên
     return 'Password123@!'; // Thay bằng logic tạo mật khẩu ngẫu nhiên thực tế nếu cần

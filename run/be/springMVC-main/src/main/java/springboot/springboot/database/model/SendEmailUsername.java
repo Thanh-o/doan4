@@ -24,6 +24,9 @@ public class SendEmailUsername {
                 "</head>" +
                 "<body>" +
                 "<div class='container'>" +
+                "<div style='text-align:center; margin-bottom: 10px'>" +
+                "<img src='https://i.ibb.co/ztg2nLn/fpt-health-high-resolution-logo-transparent.png' alt='FPT Health Logo' height='80' />" +
+                "</div>"+
                 "<div class='header'>" +
                 "<h2>Welcome to FPT Health</h2>" +
                 "</div>" +
@@ -67,6 +70,8 @@ public class SendEmailUsername {
             throw new RuntimeException(e);
         }
     }
+
+
     public void sendEmailFormRegister(String doctorName, String departmentName, String medicalDay, String patientEmail, String patientName,String timeSlot) {
         final String username = "hongphuc0835@gmail.com";
         final String password = "joia vkwu vppg pdvu";
@@ -78,11 +83,14 @@ public class SendEmailUsername {
                 ".container { min-width: 500px; font-size: 14px; margin: 20px auto; padding: 20px; background-color: #f0f0f0; border: none; border-radius: 4px; box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); }" +
                 ".header { background-color: #004B91; color: white; padding: 10px; text-align: center; border-radius: 4px; }" +
                 ".content { padding: 20px; }" +
-                "strong { color: #004B91}" +
+                "strong { color: #004B91 }" +
                 "</style>" +
                 "</head>" +
                 "<body>" +
                 "<div class='container'>" +
+                "<div style='text-align:center; margin-bottom: 10px'>" +
+                "<img src='https://i.ibb.co/ztg2nLn/fpt-health-high-resolution-logo-transparent.png' alt='FPT Health Logo' height='80' />" +
+                "</div>" +
                 "<div class='header'>" +
                 "<h2>Appointment Notification</h2>" +
                 "</div>" +
@@ -98,6 +106,7 @@ public class SendEmailUsername {
                 "</div>" +
                 "</body>" +
                 "</html>";
+
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -126,6 +135,7 @@ public class SendEmailUsername {
         }
     }
 
+
     public static void sendEmailForgot(String name, String email, String code) {
         final String username = "hongphuc0835@gmail.com";
         final String password = "joia vkwu vppg pdvu";
@@ -142,6 +152,9 @@ public class SendEmailUsername {
                 "</head>" +
                 "<body>" +
                 "<div class='container'>" +
+                "<div style='text-align:center; margin-bottom: 10px'>" +
+                "<img src='https://i.ibb.co/ztg2nLn/fpt-health-high-resolution-logo-transparent.png' alt='FPT Health Logo' height='80' />" +
+                "</div>"+
                 "<div class='header'>" +
                 "<h2>Password Reset Request</h2>" +
                 "</div>" +
@@ -199,6 +212,9 @@ public class SendEmailUsername {
                 "</head>" +
                 "<body>" +
                 "<div class='container'>" +
+                "<div style='text-align:center; margin-bottom: 10px'>" +
+                "<img src='https://i.ibb.co/ztg2nLn/fpt-health-high-resolution-logo-transparent.png' alt='FPT Health Logo' height='80' />" +
+                "</div>"+
                 "<div class='header'>" +
                 "<h2>Thanks for your feedback</h2>" +
                 "</div>" +
@@ -250,6 +266,9 @@ public class SendEmailUsername {
                 "</head>" +
                 "<body>" +
                 "<div class='container'>" +
+                "<div style='text-align:center; margin-bottom: 10px'>" +
+                "<img src='https://i.ibb.co/ztg2nLn/fpt-health-high-resolution-logo-transparent.png' alt='FPT Health Logo' height='80' />" +
+                "</div>"+
                 "<div class='header'>" +
                 "<h2>Appointment Notification</h2>" +
                 "</div>" +

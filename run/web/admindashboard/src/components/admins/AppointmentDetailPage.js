@@ -11,6 +11,10 @@ const AppointmentDetailPageC1 = () => {
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [departmentData, setDepartmentData] = useState({});
     const navigate = useNavigate();
+    const [confirmModal, setConfirmModal] = useState({
+        isOpen: false,
+        actionType: null, // 'CANCELLED' or 'MISSED'
+    });
 
     useEffect(() => {
         const fetchAppointmentDetails = async () => {
@@ -31,7 +35,7 @@ const AppointmentDetailPageC1 = () => {
     }, [appointmentId]);
 
     const handleBack = () => {
-        navigate('/appointments');
+        navigate(-1);
     };
 
     const handleOpenFeedbackModal = () => {
@@ -90,6 +94,7 @@ const AppointmentDetailPageC1 = () => {
     };
 
     return (
+
         <div className="appointment-detail-pageC1">
             <Sidebar
                 onInboxClick={handleOpenFeedbackModal}
@@ -101,10 +106,12 @@ const AppointmentDetailPageC1 = () => {
             />
             <div className="contentC1">
                 <div className="headerC1">
-                    <h2>Appointment Detail</h2>
+
                     <button className="back-buttonC1" onClick={handleBack}>
-                       Appointments List
+                        ← Back
                     </button>
+                    <h2>Appointment Detail</h2>
+                    <p></p>
                 </div>
 
                 {appointment ? (
@@ -132,7 +139,7 @@ const AppointmentDetailPageC1 = () => {
                                 </div>
                             </div>
                         </div>
- 
+
                         <div className="info-cardC1">
                             <div className="card-headerC1">
                                 <div className="card-iconC1">👤</div>
@@ -230,7 +237,7 @@ const AppointmentDetailPageC1 = () => {
                                 </div>
                                 <div className="info-itemC1">
                                     <div className="info-labelC1">Notes</div>
-                                    <div className="info-valueC1">No additional notes</div>
+                                    <div className="info-valueC1">{appointment.note}</div>
                                 </div>
                             </div>
                         </div>
@@ -249,7 +256,68 @@ const AppointmentDetailPageC1 = () => {
                         </div>
                     </div>
                 )}
+                {appointment?.status === "PENDING" && (
+                    <div className="status-actionsC1">
+                        <h3>Update Appointment Status:</h3>
+                        <button
+                            className="cancel-buttonC1"
+                            onClick={() => setConfirmModal({ isOpen: true, actionType: 'CANCELLED' })}
+                        >
+                            Mark as CANCELLED
+                        </button>
+                        <button
+                            className="missed-buttonC1"
+                            onClick={() => setConfirmModal({ isOpen: true, actionType: 'MISSED' })}
+                        >
+                            Mark as MISSED
+                        </button>
+                    </div>
+                )}
+                {confirmModal.isOpen && (
+                    <div className="custom-modal-overlayC1">
+                        <div className="custom-modalC1">
+                            <h2>Confirm Action</h2>
+                            <p>
+                                Are you sure you want to mark this appointment as{" "}
+                                <strong>{confirmModal.actionType}</strong>?
+                            </p>
+                            <div className="modal-buttonsC1">
+                                <button
+                                    className="confirm-buttonC1"
+                                    onClick={async () => {
+                                        try {
+                                            await axios.put('http://localhost:8081/api/v1/appointments/updateStatus', {
+                                                appointment_id: appointment.appointment_id,
+                                                status: confirmModal.actionType,
+                                                staff_id: 1
+                                            });
+                                            setAppointment({
+                                                ...appointment,
+                                                status: confirmModal.actionType
+                                            });
+                                            setConfirmModal({ isOpen: false, actionType: null });
+                                        } catch (error) {
+                                            console.error('Status update failed', error);
+                                        }
+                                    }}
+                                >
+                                    Yes, Confirm
+                                </button>
+                                <button
+                                    className="cancel-buttonC12"
+                                    onClick={() => setConfirmModal({ isOpen: false, actionType: null })}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+
+
             </div>
+
         </div>
     );
 };

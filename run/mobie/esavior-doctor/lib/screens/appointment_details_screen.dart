@@ -286,6 +286,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> wit
                   _buildDetailRow('Time frame', getTimeSlot(appointment['slot'])),
                   _buildDetailRow('Status', status),
                   _buildDetailRow('Payment type', appointment['payment_name']?.toString() ?? ''),
+                  _buildDetailRow('Note', appointment['note']?.toString() ?? ''),
                   _buildDetailRow('Officer in charge', appointment['staff_id']?.toString() ?? ''),
                   _buildDetailRow('Price', '\$${appointment['price']?.toInt().toString() ?? '0'}'),
                 ]),

@@ -1,0 +1,379 @@
+/* Reset default styles and ensure full-screen layout */
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Main container for PatientDetailPage */
+.patient-detail-pageB1 {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Sidebar styling (consistent with DoctorsPageA1) */
+.sidebarB1 {
+    width: 280px;
+    flex-shrink: 0;
+    height: 100vh;
+    background-color: #ffffff;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    transition: width 0.3s ease, transform 0.3s ease;
+}
+
+/* Patient content container */
+.patient-contentB1 {
+    flex: 1;
+    padding: 24px;
+    background-color: #f5f7fa;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    height: 90vh;
+}
+
+/* Header styling */
+.headerB1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.headerB1 h2 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1e3a8a;
+    letter-spacing: -0.03em;
+}
+
+/* Back button */
+.back-buttonB1 {
+    padding: 12px 24px;
+    background-color: #1e3a8a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-buttonB1:hover {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+}
+
+.back-buttonB1:active {
+    transform: translateY(0);
+}
+
+/* Patient info section */
+.patient-infoB1 {
+    background-color: #004b91;
+    color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    align-items: center;
+}
+
+.patient-infoB1 img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.patient-infoB1 .info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.patient-infoB1 p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.patient-infoB1 p strong {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Appointments and medical records container */
+.appointments-containerB1 {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Appointments and medical records card */
+.appointments-cardB1 {
+    border-radius: 12px;
+    margin-top: 26px;
+}
+
+.appointments-cardB1 h6 {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+/* Table container */
+.table-containerB1 {
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #1e3a8a #e5e7eb;
+}
+
+.table-containerB1::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-containerB1::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 12px;
+}
+
+.table-containerB1::-webkit-scrollbar-thumb {
+    background-color: #1e3a8a;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+th, td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+    background-color: #004b91;
+    font-weight: 600;
+    color: #f1f1f1;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+td {
+    font-size: 14px;
+    color: #374151;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover {
+    background-color: #f3f4f6;
+    cursor: pointer;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Overlay content */
+.overlay-contentB1 {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    animation: slideUp 0.4s ease;
+}
+
+/* Close button */
+.close-buttonB1 {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.close-buttonB1:hover {
+    background-color: #b91c1c;
+    transform: rotate(90deg);
+}
+
+/* Search results page */
+.search-results-pageB1 {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Result container */
+.result-containerB1 {
+    padding: 32px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #f5f7fa;
+}
+
+/* Result list */
+.result-containerB1 ul {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+/* Result list item */
+.result-containerB1 ul li {
+    list-style-type: none;
+    width: 100%;
+}
+
+/* Result div */
+.result-divB1 {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: row;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    border-radius: 12px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.result-divB1:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-4px);
+    cursor: pointer;
+}
+
+.result-divB1 div {
+    width: 50%;
+    padding: 8px;
+    font-size: 15px;
+    color: #374151;
+}
+
+/* Result heading */
+.result-containerB1 h3 {
+    margin: 0 0 16px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebarB1 {
+        width: 80px;
+    }
+
+    .patient-contentB1,
+    .result-containerB1 {
+        padding: 24px;
+    }
+
+    .headerB1 h2 {
+        font-size: 24px;
+    }
+
+    .patient-infoB1 {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .patient-infoB1 img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .result-divB1 {
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    .result-divB1 div {
+        width: 100%;
+    }
+
+    .overlay-contentB1 {
+        width: 95%;
+        padding: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerB1 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .back-buttonB1 {
+        width: 100%;
+    }
+
+    .result-divB1 div {
+        padding: 4px;
+    }
+
+    .patient-infoB1 img {
+        width: 60px;
+        height: 60px;
+    }
+}

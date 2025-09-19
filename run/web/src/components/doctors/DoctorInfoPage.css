@@ -1,0 +1,221 @@
+/* ✅ DoctorInfoPage.css - Giao diện hồ sơ hiện đại (cải tiến + dialog nâng cấp) */
+.profiledoctor {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.profile-container {
+    width: 100%;
+    padding: 20px 40px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+    overflow-y: auto;
+    background-color: #f5f7fa;
+}
+
+.profile-title {
+    text-align: center;
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+.profile-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 25px;
+}
+
+.profile-avatar {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #007bff;
+    transition: transform 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+.profile-basic-info h3 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.profile-basic-info p {
+    margin: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #34495e;
+}
+
+.profile-details,
+.profile-department {
+    margin-top: 25px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.profile-details h4,
+.profile-department h4 {
+    margin-bottom: 12px;
+    color: #007bff;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.profile-actions {
+    margin-top: 35px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* ✅ Dialog nâng cấp */
+.dialog-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+
+}
+
+.dialog {
+    background: #fff;
+    padding: 0 0 30px 10px;
+    width: 50%;
+    border-radius: 16px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+    max-height: 90vh;
+}
+
+.dialog-content{
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    animation: fadeInDialog 0.3s ease-in-out;
+    padding: 0 30px 0 0;
+}
+
+.dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 14px ;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid #eee;
+}
+
+.dialog-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.dialog-close {
+    font-size: 30px;
+    font-weight: bold;
+    color: #999;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.dialog-close:hover {
+    color: #333;
+}
+
+.dialog label {
+    font-weight: 600;
+    margin-top: 8px;
+    color: #333;
+}
+
+.dialog input,
+.dialog select {
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+    background-color: #fefefe;
+    transition: border 0.2s ease;
+}
+
+.dialog input:focus,
+.dialog select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* ✅ Button style */
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    justify-content: center;
+    text-align: center;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.doctorinfo-btn-primary {
+    background-color: #1976d2;
+    color: #fff;
+}
+
+.doctorinfo-btn-secondary {
+    background-color: #e0e0e0 ;
+    color: #000;
+}
+
+.doctorinfo-btn-warning {
+    background-color: #8623bf;
+    color: #fff;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+

@@ -93,6 +93,9 @@ class _AppointmentState extends State<Appointment> {
   final _patientNameController = TextEditingController();
   final _patientEmailController = TextEditingController();
   final _patientPhoneController = TextEditingController();
+  final _patientNoteController = TextEditingController();
+
+  String? finalNote;
 
   List departments = [];
   List availableDoctors = [];
@@ -185,6 +188,7 @@ class _AppointmentState extends State<Appointment> {
   void initState() {
     super.initState();
     fetchDepartments();
+
 
     // Initialize filtered departments
     filteredDepartments = departments;
@@ -463,6 +467,7 @@ class _AppointmentState extends State<Appointment> {
         'patient_name': _patientNameController.text,
         'patient_email': _patientEmailController.text,
         'patient_phone': _patientPhoneController.text,
+        'note' : _patientNoteController.text,
         'doctor_id': int.parse(selectedDoctor!),
         'department_id': int.parse(selectedDepartment!),
         'medical_day': selectedDay!.substring(0, 10),
@@ -744,7 +749,7 @@ class _AppointmentState extends State<Appointment> {
                 });
               },
               child: const Text(
-                'Confirm',
+                'Pay',
                 style: TextStyle(
                   color: whiteColor,
                   fontSize: 16,
@@ -1562,7 +1567,60 @@ class _AppointmentState extends State<Appointment> {
               },
             ),
           ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: TextFormField(
+              controller: _patientNoteController,
+              keyboardType: TextInputType.text,
+              cursorColor: Colors.black54,
+              style: const TextStyle(
+                  color: blackColor,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold),
+              decoration: const InputDecoration(
+                prefixIcon: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Icon(
+                    Icons.note,
+                    color: Colors.black54,
+                  ),
+                ),
+                hintText: 'Note',
+                hintStyle: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black54, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black54, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.red,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.red,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                errorStyle: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
+              ),
 
+            ),
+          ),
           const SizedBox(height: 20),
 
           // Navigation Buttons
@@ -1612,7 +1670,8 @@ class _AppointmentState extends State<Appointment> {
                     ),
                     onPressed: () {
                       if (_formKeyStep3.currentState!.validate()) {
-                        setState(() {
+                         setState(() {
+
                           step = 3;
                         });
                       }
@@ -1745,6 +1804,11 @@ class _AppointmentState extends State<Appointment> {
                 Icons.phone,
                 'Phone',
                 _patientPhoneController.text,
+              ),
+              _buildConfirmationRow(
+                Icons.note,
+                'Note',
+                _patientNoteController.text,
               ),
 
               const Divider(height: 30, thickness: 1),
@@ -2137,6 +2201,7 @@ class _AppointmentState extends State<Appointment> {
                                 _patientNameController.clear();
                                 _patientEmailController.clear();
                                 _patientPhoneController.clear();
+
                                 // Reset auto-load states
                                 isPatientDataLoaded = false;
                                 isLoadingPatientData = false;

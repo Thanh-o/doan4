@@ -307,6 +307,10 @@ const AdminDashboard = () => {
         navigate(`/patients/${patientId}`);
     };
 
+    const handleCreate = () => {
+        navigate('/new-appointment');
+    };
+
     return (
         <div className="admin-dashboard">
             <Sidebar
@@ -330,9 +334,15 @@ const AdminDashboard = () => {
                         </div>
                         <button onClick={handleSearch}>Search</button>
                     </div>
+
                     <div className="profile">
-                        <button onClick={handleLogout}>
-                            Logout <img width="20" height="20" src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png" alt="exit--v1" />
+                        <div className="create-appoint">
+                            <button onClick={handleCreate}>New Appointment +</button>
+                        </div>
+
+                        <button onClick={handleLogout} className="logout">
+                            Logout <img width="20" height="20" src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
+                                        alt="exit--v1"/>
                         </button>
                     </div>
                 </div>

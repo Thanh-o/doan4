@@ -1,0 +1,25 @@
+.monthly-appointments {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+
+}
+
+.search-bar, .status-filter {
+    padding: 10px;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    font-size: 14px;
+}
+
+.status-filter {
+    min-width: 180px;
+    background-color: white;
+}
+
+.monthly-filter{
+    display: flex;
+    gap: 10px;
+}

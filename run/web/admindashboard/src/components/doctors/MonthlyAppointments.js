@@ -27,11 +27,13 @@ const MonthlyAppointments = () => {
                     const filteredSorted = response.data
                         .filter(item => /^[A-Z]+$/.test(item.status)) // ✅ chỉ lấy status viết hoa
                         .sort((a, b) => {
+
                             const dateA = new Date(a.medical_day);
                             const dateB = new Date(b.medical_day);
                             if (dateA.getTime() !== dateB.getTime()) {
                                 return dateA - dateB; // sắp theo ngày
                             }
+
                             return a.slot - b.slot; // cùng ngày sắp theo giờ (slot)
                         });
 
@@ -87,6 +89,34 @@ const MonthlyAppointments = () => {
         navigate('/medicalrecords');
     };
 
+    const handleViewDetails = async (appointment) => {
+        try {
+            const patientId = appointment.patient?.[0]?.patient_id;
+
+            if (!patientId) {
+                console.error("Patient ID not found in appointment");
+                return;
+            }
+
+            const response = await axios.get(
+                `http://localhost:8081/api/v1/medicalrecords/patient/${patientId}`
+            );
+
+            navigate("/record-details", {
+                state: {
+                    records: response.data || [],
+                },
+            });
+        } catch (error) {
+            console.error("Error fetching medical records:", error);
+            navigate("/record-details", {
+                state: {
+                    records: [],
+                },
+            });
+        }
+    };
+
     return (
         <div className="monthly-appointments">
             <Sidebar
@@ -121,14 +151,24 @@ const MonthlyAppointments = () => {
                 <ul className="appointments-list">
                     {filteredMonthAppointments.map((appointment, index) => (
                         <li key={index}>
-                            <p>Patient Name: {appointment.patient?.[0]?.patient_name || ''}</p>
-                            <p>Email: {appointment.patient?.[0]?.patient_email || ''}</p>
-                            <p>Date: {new Date(appointment.medical_day).toLocaleDateString()}</p>
-                            <p>Time: {formatTimeSlot(appointment.slot)}</p>
-                            <p>
-                                Status: <span
-                                className={`status ${appointment.status.toLowerCase()}`}>{appointment.status}</span>
-                            </p>
+                            <div>
+                                <p>Patient Name: {appointment.patient?.[0]?.patient_name || ''}</p>
+                                <p>Email: {appointment.patient?.[0]?.patient_email || ''}</p>
+                                <p>Date: {new Date(appointment.medical_day).toLocaleDateString()}</p>
+                                <p>Time: {formatTimeSlot(appointment.slot)}</p>
+                                <p>
+                                    Status: <span
+                                    className={`status ${appointment.status.toLowerCase()}`}>{appointment.status}</span>
+                                </p>
+                            </div>
+                            <div>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => handleViewDetails(appointment)}
+                                >
+                                    View Medical Record
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>

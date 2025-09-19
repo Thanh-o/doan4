@@ -65,34 +65,21 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.5),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     _pulseController.repeat(reverse: true);
   }
@@ -112,17 +99,17 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
         doctorId = int.tryParse(idString);
         if (doctorId != null) {
           // Fetch both doctor and departments data
-          await Future.wait([
-            fetchDoctor(),
-            fetchDepartments(),
-          ]);
+          await Future.wait([fetchDoctor(), fetchDepartments()]);
           if (mounted) {
             _animationController.forward();
           }
         }
       }
     } catch (e) {
-      _showSnackBar('Error loading information. Please try again.!', errorColor);
+      _showSnackBar(
+        'Error loading information. Please try again.!',
+        errorColor,
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -172,12 +159,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
     if (doctor != null && departments.isNotEmpty) {
       final doctorDepartmentId = doctor!['department_id'];
       final department = departments.firstWhere(
-            (dept) => dept['department_id'] == doctorDepartmentId,
+        (dept) => dept['department_id'] == doctorDepartmentId,
         orElse: () => null,
       );
 
       setState(() {
-        departmentName = department != null ? department['department_name'] : 'Unknown Department';
+        departmentName =
+            department != null ? department['department_name'] : '';
       });
     }
   }
@@ -192,8 +180,15 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const LoginScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              pageBuilder:
+                  (context, animation, secondaryAnimation) =>
+                      const LoginScreen(),
+              transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+              ) {
                 return FadeTransition(opacity: animation, child: child);
               },
             ),
@@ -213,7 +208,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: cardColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: Row(
             children: [
               Container(
@@ -247,8 +244,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               child: Text(
                 'Cancel',
@@ -264,8 +266,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: errorColor,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               child: Text(
@@ -288,7 +295,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
         content: Row(
           children: [
             Icon(
-              backgroundColor == successColor ? Icons.check_circle_outline : Icons.error_outline,
+              backgroundColor == successColor
+                  ? Icons.check_circle_outline
+                  : Icons.error_outline,
               color: Colors.white,
               size: 20,
             ),
@@ -339,11 +348,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       final base64Image = base64Encode(imageBytes);
 
       const imgbbApiKey = 'fa4176aa6360d22d4809f8799fbdf498';
-      final uploadUrl = Uri.parse('https://api.imgbb.com/1/upload?key=$imgbbApiKey');
+      final uploadUrl = Uri.parse(
+        'https://api.imgbb.com/1/upload?key=$imgbbApiKey',
+      );
 
-      final response = await http.post(uploadUrl, body: {
-        'image': base64Image,
-      });
+      final response = await http.post(uploadUrl, body: {'image': base64Image});
 
       if (response.statusCode == 200) {
         final imageUrl = jsonDecode(response.body)['data']['url'];
@@ -484,10 +493,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       final response = await http.put(
         updateUrl,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'doctor_id': doctorId,
-          'doctor_image': imageUrl,
-        }),
+        body: jsonEncode({'doctor_id': doctorId, 'doctor_image': imageUrl}),
       );
 
       if (response.statusCode == 200) {
@@ -505,34 +511,35 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: _isLoading || doctor == null
-          ? _buildLoadingState()
-          : FadeTransition(
-        opacity: _fadeAnimation,
-        child: CustomScrollView(
-          slivers: [
-            _buildSliverAppBar(),
-            SliverToBoxAdapter(
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      _buildStatsCards(),
-                      const SizedBox(height: 24),
-                      _buildProfileDetails(),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+      body:
+          _isLoading || doctor == null
+              ? _buildLoadingState()
+              : FadeTransition(
+                opacity: _fadeAnimation,
+                child: CustomScrollView(
+                  slivers: [
+                    _buildSliverAppBar(),
+                    SliverToBoxAdapter(
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: [
+                              _buildStatsCards(),
+                              const SizedBox(height: 24),
+                              _buildProfileDetails(),
+                              const SizedBox(height: 24),
+                              _buildActionButtons(),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -617,7 +624,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.settings_outlined, color: Colors.white, size: 24),
+          icon: const Icon(
+            Icons.settings_outlined,
+            color: Colors.white,
+            size: 24,
+          ),
           onPressed: () {
             Navigator.push(
               context,
@@ -649,25 +660,31 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
           child: CircleAvatar(
             radius: 60,
             backgroundColor: Colors.white,
-            child: doctor!['doctor_image'] != null && doctor!['doctor_image'].isNotEmpty
-                ? ClipOval(
-              child: Image.network(
-                doctor!['doctor_image'],
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return CircularProgressIndicator(
-                    color: primaryColor,
-                    strokeWidth: 2,
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.person, size: 60, color: primaryColor),
-              ),
-            )
-                : Icon(Icons.person, size: 60, color: primaryColor),
+            child:
+                doctor!['doctor_image'] != null &&
+                        doctor!['doctor_image'].isNotEmpty
+                    ? ClipOval(
+                      child: Image.network(
+                        doctor!['doctor_image'],
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return CircularProgressIndicator(
+                            color: primaryColor,
+                            strokeWidth: 2,
+                          );
+                        },
+                        errorBuilder:
+                            (context, error, stackTrace) => Icon(
+                              Icons.person,
+                              size: 60,
+                              color: primaryColor,
+                            ),
+                      ),
+                    )
+                    : Icon(Icons.person, size: 60, color: primaryColor),
           ),
         ),
         Positioned(
@@ -689,16 +706,17 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                   ),
                 ],
               ),
-              child: _isUploadingImage
-                  ? SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                ),
-              )
-                  : Icon(Icons.camera_alt, color: Colors.white, size: 16),
+              child:
+                  _isUploadingImage
+                      ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                      : Icon(Icons.camera_alt, color: Colors.white, size: 16),
             ),
           ),
         ),
@@ -810,7 +828,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                     color: primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.person_outline, color: primaryColor, size: 24),
+                  child: Icon(
+                    Icons.person_outline,
+                    color: primaryColor,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -824,17 +846,39 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
               ],
             ),
             const SizedBox(height: 24),
-            _buildDetailItem(Icons.email_outlined, 'Email', doctor!['doctor_email']),
-            _buildDetailItem(Icons.phone_outlined, 'Phone number', '0${doctor!['doctor_phone'].toString()}'),
-            _buildDetailItem(Icons.location_on_outlined, 'Address', doctor!['doctor_address']),
-            _buildDetailItem(Icons.description_outlined, 'Summary', doctor!['summary'] ?? '', isLast: true),
+            _buildDetailItem(
+              Icons.email_outlined,
+              'Email',
+              doctor!['doctor_email'],
+            ),
+            _buildDetailItem(
+              Icons.phone_outlined,
+              'Phone number',
+              '0${doctor!['doctor_phone'].toString()}',
+            ),
+            _buildDetailItem(
+              Icons.location_on_outlined,
+              'Address',
+              doctor!['doctor_address'],
+            ),
+            _buildDetailItem(
+              Icons.description_outlined,
+              'Summary',
+              doctor!['summary'] ?? '',
+              isLast: true,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailItem(IconData icon, String label, String? value, {bool isLast = false}) {
+  Widget _buildDetailItem(
+    IconData icon,
+    String label,
+    String? value, {
+    bool isLast = false,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: isLast ? 0 : 20),
       child: Row(
@@ -931,16 +975,17 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen>
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            icon: _isLoading
-                ? SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(
-                color: errorColor,
-                strokeWidth: 2,
-              ),
-            )
-                : const Icon(Icons.logout, size: 22),
+            icon:
+                _isLoading
+                    ? SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        color: errorColor,
+                        strokeWidth: 2,
+                      ),
+                    )
+                    : const Icon(Icons.logout, size: 22),
             label: Text(
               'Logout',
               style: GoogleFonts.inter(

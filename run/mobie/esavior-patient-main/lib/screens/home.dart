@@ -28,6 +28,7 @@ class Home extends StatefulWidget {
 
   @override
   _HomeState createState() => _HomeState();
+
 }
 
 class _HomeState extends State<Home> {
@@ -36,6 +37,8 @@ class _HomeState extends State<Home> {
   String name = '';
   final random = Random();
   bool isSuccessBooked = false;
+  Map<String, String> departments = {};
+
 
   @override
   void initState() {
@@ -43,6 +46,8 @@ class _HomeState extends State<Home> {
     _loadBookingStatus();
     fetchDoctors();
     fetchPatientData();
+    fetchDepartments();
+
   }
 
   void _loadBookingStatus() async {
@@ -62,6 +67,30 @@ class _HomeState extends State<Home> {
       _loadBookingStatus();
     }
   }
+
+  Future<void> fetchDepartments() async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8081/api/v1/departments/list'));
+      print('Body: ${response.body}');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          departments = {
+            for (var dept in data)
+              dept['department_id'].toString(): dept['department_name'].toString()
+          };
+        });
+        print(departments);
+      } else {
+        print('Lỗi tải departments: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Lỗi kết nối API departments: $e');
+    }
+  }
+
+
+
 
   Future<void> fetchPatientData() async {
     if (widget.patientId == null) return;
@@ -638,17 +667,17 @@ class _HomeState extends State<Home> {
         ));
   }
 
-  final Map<String, String> departments = {
-    '12': 'Pediatrics',
-    '13': 'Dentistry',
-    '14': 'Neurology',
-    '15': 'Ophthalmology',
-    '16': 'Cardiology',
-    '17': 'Digestive',
-  };
+  // final Map<String, String> departments = {
+  //   '12': 'Pediatrics',
+  //   '13': 'Dentistry',
+  //   '14': 'Neurology',
+  //   '15': 'Ophthalmology',
+  //   '16': 'Cardiology',
+  //   '17': 'Digestive',
+  // };
 
   String getDepartmentName(int departmentId) {
-    return departments[departmentId.toString()] ?? 'Unknown Department';
+    return departments[departmentId.toString()] ?? '';
   }
 
   Widget _buildDoctorCard(int index) {
@@ -708,7 +737,11 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DoctorDetailsScreen(doctor: doctor),
+                      builder: (context) => DoctorDetailsScreen(
+                        doctor: doctor,
+                        departmentName: departmentName,
+
+                      ),
                     ),
                   );
                 },

@@ -52,7 +52,7 @@
 
 .btn-primary:hover {
     background-color: white;
-    color: #004B91;
+
     box-shadow: 0 0 3px #004B91;
 }
 
@@ -335,6 +335,10 @@ h4 {
 }
 
 .status.pending {
+    color: #8623bf;
+
+}
+.status.missed {
     color: #d6a310;
 
 }
